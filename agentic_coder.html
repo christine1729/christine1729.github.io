@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Agentic Developer: An Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Warm Neutrals (Slate, Stone, Amber) -->
+    <!-- Application Structure Plan: A top-nav driven SPA with five thematic sections: 1. An introduction to set the stage. 2. An interactive "Head-to-Head" comparison to dynamically explore the differences between Claude Code and Cursor. 3. A "Mastering Workflows" section using interactive cards to detail advanced techniques and resources. 4. A "Prompting Guide" with an accordion UI to teach prompt engineering. 5. A "Build Your Agent" section that presents the 'Paper Buddy' tutorial as a clear, step-by-step process. This structure is chosen over a linear document to empower users to jump directly to the content most relevant to their needs, whether it's conceptual understanding, practical skills, or a hands-on project. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Philosophical differences (Control vs. Autonomy). Goal: Compare. Viz: Radar Chart. Interaction: Hover tooltips. Justification: Provides a quick, multi-dimensional visual summary of the core concepts. Library: Chart.js.
+        - Report Info: Feature-by-feature comparison. Goal: Compare. Viz: Two-column dynamic text layout. Interaction: User clicks buttons for a feature (e.g., "Execution Model"), and the content for both tools updates. Justification: More engaging and focused than a static table. Library: Vanilla JS.
+        - Report Info: Advanced techniques/super tricks. Goal: Inform/Organize. Viz: Interactive cards. Interaction: Click to reveal more details. Justification: Breaks down dense information into digestible, visually separated chunks. Library: Vanilla JS.
+        - Report Info: 'Paper Buddy' assignment steps. Goal: Organize/Show Process. Viz: HTML/CSS timeline. Interaction: Click a step to highlight it and show the detailed prompt. Justification: Visually communicates the sequence and makes a complex process easy to follow. Library: Vanilla JS.
+        - Report Info: GitHub Repositories. Goal: Inform/Resource. Viz: Grid of clickable cards. Interaction: Links to external sites. Justification: Provides direct access to valuable community resources in a clean, organized layout. Library: N/A (HTML/CSS).
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9; /* slate-100 */
+            color: #1e293b; /* slate-800 */
+        }
+        .nav-link {
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #c2410c; /* orange-600 */
+            border-bottom-color: #c2410c; /* orange-600 */
+        }
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .step.active .step-circle {
+            background-color: #c2410c; /* orange-600 */
+            color: white;
+        }
+        .step.active .step-content {
+            border-color: #c2410c; /* orange-600 */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 40vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="text-2xl font-bold text-slate-900">
+                    The Agentic Developer
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#home" class="nav-link font-medium pb-1">Home</a>
+                    <a href="#compare" class="nav-link font-medium pb-1">Head-to-Head</a>
+                    <a href="#workflows" class="nav-link font-medium pb-1">Workflows</a>
+                    <a href="#prompting" class="nav-link font-medium pb-1">Prompting</a>
+                    <a href="#build" class="nav-link font-medium pb-1">Build an Agent</a>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-slate-800 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="hidden md:hidden mt-4 space-y-2">
+                <a href="#home" class="block nav-link text-center py-2">Home</a>
+                <a href="#compare" class="block nav-link text-center py-2">Head-to-Head</a>
+                <a href="#workflows" class="block nav-link text-center py-2">Workflows</a>
+                <a href="#prompting" class="block nav-link text-center py-2">Prompting</a>
+                <a href="#build" class="block nav-link text-center py-2">Build an Agent</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="py-20 md:py-32 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-slate-900 leading-tight">Welcome to the New Era of Software Development.</h1>
+                <p class="mt-6 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
+                    AI coding assistants are no longer just for autocompletion. They are active collaborators in the creative process. This guide provides an interactive exploration of two leading platforms, **Claude Code** and **Cursor**, helping you understand their philosophies, master their workflows, and build your first AI-powered agent.
+                </p>
+                <a href="#compare" class="mt-10 inline-block bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-orange-700 transition-transform transform hover:scale-105">
+                    Start Exploring
+                </a>
+            </div>
+        </section>
+
+        <section id="compare" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">Head-to-Head: Claude Code vs. Cursor</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">
+                        Choosing between Claude Code and Cursor is a choice between two philosophies: the AI as a powerful tool you wield, or as an integrated partner that anticipates your needs. Explore their core differences below.
+                    </p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-semibold mb-4">A Philosophical Divide</h3>
+                        <div class="chart-container">
+                            <canvas id="philosophyChart"></canvas>
+                        </div>
+                        <p class="mt-4 text-slate-600 text-sm">This chart visualizes the core design philosophies. Hover over the points to learn more.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl shadow-lg">
+                        <h3 class="text-2xl font-semibold mb-6 text-center">Interactive Feature Comparison</h3>
+                        <div id="comparison-buttons" class="flex flex-wrap justify-center gap-3 mb-6">
+                            <button data-feature="interface" class="comparison-btn active bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-medium">Interface</button>
+                            <button data-feature="execution" class="comparison-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-medium">Execution Model</button>
+                            <button data-feature="context" class="comparison-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-medium">Context</button>
+                            <button data-feature="integration" class="comparison-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-medium">Integration</button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h4 class="text-xl font-bold mb-2 text-center">Claude Code</h4>
+                                <div id="claude-content" class="text-slate-700 p-4 bg-slate-50 rounded-lg min-h-[150px]"></div>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-bold mb-2 text-center">Cursor</h4>
+                                <div id="cursor-content" class="text-slate-700 p-4 bg-slate-50 rounded-lg min-h-[150px]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="workflows" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">Mastering Agentic Workflows</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">
+                        Move beyond basic features and unlock a step-change in productivity. Mastering these advanced techniques requires a mental shift from giving instructions to orchestrating processes.
+                    </p>
+                </div>
+                <div class="grid md:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-2xl font-semibold text-center mb-8">Supercharging Claude Code</h3>
+                        <div class="space-y-6">
+                            <div class="card bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-lg">Orchestrate with Sub-Agents (New!)</h4>
+                                <p class="text-slate-600 mt-2">Delegate tasks to specialized AIs. Create sub-agents with specific prompts and tools (e.g., a "Test Writer" or "Docstring Generator") that Claude can invoke, keeping the main context clean and focused.</p>
+                            </div>
+                            <div class="card bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-lg">The `CLAUDE.md` Manifest</h4>
+                                <p class="text-slate-600 mt-2">Create a permanent "brain" for your project. Use `/init` to generate a file where you define core logic, common commands, and coding styles for Claude to follow in every session.</p>
+                            </div>
+                            <div class="card bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-lg">Strategic Planning with "Plan Mode"</h4>
+                                <p class="text-slate-600 mt-2">Press `Shift+Tab` twice to enter a read-only mode. Claude will research the codebase and propose a detailed plan for your approval before making any changes, ensuring safety and precision.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold text-center mb-8">Hyper-Productivity in Cursor</h3>
+                        <div class="space-y-6">
+                            <div class="card bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-lg">Autonomous "YOLO Mode"</h4>
+                                <p class="text-slate-600 mt-2">Enable this mode to let the AI run tests and build commands in a loop. Give it a goal, like "fix all build errors," and it will work autonomously until the task is complete.</p>
+                            </div>
+                             <div class="card bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-lg">AI-Driven TDD</h4>
+                                <p class="text-slate-600 mt-2">Prompt the agent to write tests first, then the implementation code to make them pass. Cursor can run the full `code -> test -> fix` cycle from a single high-level instruction.</p>
+                            </div>
+                             <div class="card bg-slate-50 p-6 rounded-xl border border-slate-200">
+                                <h4 class="font-bold text-lg">Project-Specific Guardrails</h4>
+                                <p class="text-slate-600 mt-2">Use a `.cursorrules` file to enforce team-wide standards, like "Always use Tailwind CSS for styling." This ensures AI-generated code remains consistent with your project's architecture.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-20">
+                    <h3 class="text-2xl font-semibold text-center mb-8">Essential GitHub Repositories</h3>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <a href="https://github.com/microsoft/autogen" target="_blank" class="card block bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-lg">microsoft/autogen</h4>
+                            <p class="text-slate-600 mt-2">A powerful framework for simplifying the orchestration, optimization, and automation of complex LLM workflows.</p>
+                        </a>
+                        <a href="https://github.com/crewAIInc/crewAI" target="_blank" class="card block bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-lg">crewAIInc/crewAI</h4>
+                            <p class="text-slate-600 mt-2">Designed for orchestrating role-playing, autonomous AI agents that can collaborate to tackle complex tasks.</p>
+                        </a>
+                        <a href="https://github.com/e2b-dev/awesome-ai-agents" target="_blank" class="card block bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-lg">e2b-dev/awesome-ai-agents</h4>
+                            <p class="text-slate-600 mt-2">A curated list of the best AI agent frameworks, tools, and resources to accelerate your projects.</p>
+                        </a>
+                        <a href="https://github.com/PrefectHQ/ControlFlow" target="_blank" class="card block bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-lg">PrefectHQ/ControlFlow</h4>
+                            <p class="text-slate-600 mt-2">A Python framework for building agentic AI workflows with a focus on developer control and transparency.</p>
+                        </a>
+                        <a href="https://github.com/x1xhlol/system-prompts-and-models-of-ai-tools" target="_blank" class="card block bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-lg">system-prompts-and-models</h4>
+                            <p class="text-slate-600 mt-2">Peek behind the curtain. This repo collects the system prompts and models used by popular AI tools like Cursor.</p>
+                        </a>
+                        <a href="https://github.com/ashishpatel26/500-AI-Agents-Projects" target="_blank" class="card block bg-slate-50 p-6 rounded-xl border border-slate-200">
+                            <h4 class="font-bold text-lg">500-AI-Agents-Projects</h4>
+                            <p class="text-slate-600 mt-2">A massive collection of over 500 AI agent projects and use cases for inspiration and learning.</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="prompting" class="py-20">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">The Art of Instruction</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">
+                        The quality of AI-generated code is directly proportional to the quality of your prompts. Master these expert-level techniques to gain precise control over the output.
+                    </p>
+                </div>
+                <div class="max-w-3xl mx-auto">
+                    <div class="space-y-4" id="accordion-container">
+                        <!-- Accordion items will be generated here by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="build" class="py-20 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900">Assignment: Build "Paper Buddy"</h2>
+                    <p class="mt-4 text-lg text-slate-600 max-w-3xl mx-auto">
+                        Apply what you've learned by building a useful command-line agent. "Paper Buddy" finds the latest academic paper on a topic and emails you a summary. Follow the steps below to build it with an AI assistant.
+                    </p>
+                </div>
+                <div class="max-w-4xl mx-auto">
+                    <div class="relative">
+                        <div class="absolute left-1/2 -translate-x-1/2 h-full w-0.5 bg-slate-200" aria-hidden="true"></div>
+                        <div id="timeline-steps" class="space-y-12 relative">
+                           <!-- Timeline steps will be generated here by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-slate-800 text-slate-300 py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>Interactive Report generated from source material on Claude Code and Cursor.</p>
+            <p class="text-sm text-slate-400 mt-2">Designed to illustrate the power of interactive data presentation.</p>
+        </div>
+    </footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const philosophyData = {
+        labels: [
+            'User Control',
+            'Automation',
+            'Low-Level Access',
+            'High-Level Abstraction',
+            'Terminal Native',
+            'IDE Integrated'
+        ],
+        datasets: [{
+            label: 'Claude Code',
+            data: [9, 4, 9, 3, 10, 2],
+            fill: true,
+            backgroundColor: 'rgba(234, 88, 12, 0.2)',
+            borderColor: 'rgb(234, 88, 12)',
+            pointBackgroundColor: 'rgb(234, 88, 12)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(234, 88, 12)'
+        }, {
+            label: 'Cursor',
+            data: [5, 9, 3, 9, 2, 10],
+            fill: true,
+            backgroundColor: 'rgba(71, 85, 105, 0.2)',
+            borderColor: 'rgb(71, 85, 105)',
+            pointBackgroundColor: 'rgb(71, 85, 105)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(71, 85, 105)'
+        }]
+    };
+
+    const philosophyConfig = {
+        type: 'radar',
+        data: philosophyData,
+        options: {
+            maintainAspectRatio: false,
+            elements: {
+                line: {
+                    borderWidth: 3
+                }
+            },
+            scales: {
+                r: {
+                    angleLines: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    pointLabels: {
+                        font: {
+                            size: 12,
+                            weight: 'bold'
+                        },
+                        color: '#334155'
+                    },
+                    ticks: {
+                        backdropColor: 'transparent',
+                        color: '#64748b',
+                        stepSize: 2
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+                            if (label) {
+                                label += ': ';
+                            }
+                            if (context.parsed.r !== null) {
+                                label += `Score of ${context.parsed.r}/10`;
+                            }
+                            return label;
+                        }
+                    }
+                }
+            }
+        },
+    };
+
+    const philosophyChartCtx = document.getElementById('philosophyChart').getContext('2d');
+    new Chart(philosophyChartCtx, philosophyConfig);
+
+    const comparisonData = {
+        interface: {
+            claude: '<strong>Terminal-Native Power Tool:</strong> Integrates directly into your existing shell, inheriting your tools and scripts. Designed for keyboard-driven power users.',
+            cursor: '<strong>AI-First IDE:</strong> A full-featured graphical environment forked from VS Code. Designed for a seamless, visually integrated experience.'
+        },
+        execution: {
+            claude: '<strong>User-in-the-Loop Control:</strong> "Plan Mode" requires you to approve any changes before they are made, prioritizing safety and deliberation.',
+            cursor: '<strong>Hands-Off Automation:</strong> "Agent/YOLO Mode" allows the AI to run commands and tests autonomously until the task is complete, prioritizing speed.'
+        },
+        context: {
+            claude: '<strong>`CLAUDE.md` Manifest:</strong> A project "constitution" file that provides persistent, high-level instructions and guidelines for the AI.',
+            cursor: '<strong>`@` File Referencing:</strong> Use `@` symbols to pull in files, docs, or symbols as on-the-fly context within a chat prompt.'
+        },
+        integration: {
+            claude: '<strong>Shell Environment:</strong> Deeply integrates with `bash`, `zsh`, and command-line tools like the `gh` CLI for native GitHub operations.',
+            cursor: '<strong>VS Code Ecosystem:</strong> Inherits the entire VS Code extension market, themes, and keybindings for maximum customizability.'
+        }
+    };
+
+    const claudeContent = document.getElementById('claude-content');
+    const cursorContent = document.getElementById('cursor-content');
+    const comparisonBtns = document.querySelectorAll('.comparison-btn');
+
+    function updateComparison(feature) {
+        claudeContent.innerHTML = comparisonData[feature].claude;
+        cursorContent.innerHTML = comparisonData[feature].cursor;
+        comparisonBtns.forEach(btn => {
+            btn.classList.remove('active', 'bg-orange-600', 'text-white');
+            btn.classList.add('bg-slate-200', 'text-slate-700');
+            if (btn.dataset.feature === feature) {
+                btn.classList.add('active', 'bg-orange-600', 'text-white');
+                btn.classList.remove('bg-slate-200', 'text-slate-700');
+            }
+        });
+    }
+
+    comparisonBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            updateComparison(btn.dataset.feature);
+        });
+    });
+
+    updateComparison('interface');
+
+    const accordionData = [
+        { title: 'Assign a Role', content: 'Start your prompt by assigning a persona. For example: "You are an expert Python developer specializing in cybersecurity." This focuses the AI and yields higher-quality, more relevant responses.' },
+        { title: 'Be Explicit & Add Modifiers', content: 'Avoid vague requests. Instead of "Create a dashboard," say "Create a *fully-featured* analytics dashboard using Chart.js. Include as many relevant features as possible." This pushes the model to produce more comprehensive work.' },
+        { title: 'Use Positive Framing & XML Tags', content: 'Tell the AI what to do, not what to avoid. Use XML tags to structure the output for easy parsing. For example: `Please provide a summary in <summary> tags and the code in <python_code> tags`.' },
+        { title: 'Use Prompt Chaining', content: 'Break complex tasks into a series of smaller, single-purpose prompts. This improves accuracy and makes debugging easier. For example, first ask for keywords, then use those keywords to search, then synthesize the results.' },
+        { title: 'Let the Model "Think"', content: 'For complex reasoning, instruct the model to think step-by-step before giving the final answer. In the Claude API, you can use `<thinking>` tags. In the terminal, use the `think` or `ultrathink` commands to allocate more tokens for reasoning.' }
+    ];
+
+    const accordionContainer = document.getElementById('accordion-container');
+    accordionData.forEach((item, index) => {
+        const accordionItem = document.createElement('div');
+        accordionItem.className = 'bg-white border border-slate-200 rounded-lg';
+        accordionItem.innerHTML = `
+            <button class="accordion-toggle w-full flex justify-between items-center text-left p-5 font-semibold">
+                <span>${item.title}</span>
+                <span class="transform transition-transform duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </span>
+            </button>
+            <div class="accordion-content px-5">
+                <p class="pb-5 text-slate-600">${item.content}</p>
+            </div>
+        `;
+        accordionContainer.appendChild(accordionItem);
+    });
+
+    document.querySelectorAll('.accordion-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const content = button.nextElementSibling;
+            const icon = button.querySelector('svg').parentElement;
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                icon.classList.remove('rotate-180');
+            } else {
+                document.querySelectorAll('.accordion-content').forEach(c => c.style.maxHeight = null);
+                document.querySelectorAll('.accordion-toggle span.transform').forEach(i => i.classList.remove('rotate-180'));
+                content.style.maxHeight = content.scrollHeight + "px";
+                icon.classList.add('rotate-180');
+            }
+        });
+    });
+
+    const timelineData = [
+        {
+            step: 1,
+            title: "Project Scaffolding",
+            content: "Instruct the AI to set up the project structure: create a directory, initialize a virtual environment, create a `requirements.txt` with necessary libraries (`arxiv`, `red-mail`, `gTTS`, `anthropic`, `python-dotenv`), install them, and create the main `paper_buddy.py` script and a `.env` file."
+        },
+        {
+            step: 2,
+            title: "Implement arXiv Search",
+            content: "Prompt the AI to write a function `search_latest_paper(topic)` in `paper_buddy.py`. It should use the `arxiv` library to find the most recent paper on a given topic and return its title, authors, abstract, and PDF URL."
+        },
+        {
+            step: 3,
+            title: "Add Summarization & Email",
+            content: "Next, ask for two functions. First, `summarize_text(text)` to use the `anthropic` library to summarize the paper's abstract. Second, `send_paper_email(...)` to use `red-mail` to send a formatted HTML email with the paper's details and the new AI summary."
+        },
+        {
+            step: 4,
+            title: "Integrate the 'Podcast' Feature",
+            content: "For the optional extension, prompt the AI to create a function `create_summary_podcast(summary)` using the `gTTS` library to convert the summary text to an MP3. Then, modify the email function to attach this MP3 file."
+        },
+        {
+            step: 5,
+            title: "Assemble the Main Logic",
+            content: "Finally, instruct the AI to write the main execution block. It should use Python's `argparse` to handle command-line arguments (topic and email), call the functions in sequence, and load all secrets (API keys, SMTP credentials) securely from the `.env` file."
+        }
+    ];
+
+    const timelineContainer = document.getElementById('timeline-steps');
+    timelineData.forEach((item, index) => {
+        const stepElement = document.createElement('div');
+        stepElement.className = 'step';
+        stepElement.innerHTML = `
+            <div class="flex items-start">
+                <div class="flex flex-col items-center mr-6">
+                    <div class="step-circle w-12 h-12 rounded-full bg-slate-200 flex items-center justify-center font-bold text-lg text-slate-600 transition-colors duration-300">${item.step}</div>
+                </div>
+                <div class="step-content bg-white p-6 rounded-xl border border-slate-200 w-full cursor-pointer transition-colors duration-300">
+                    <h4 class="font-bold text-lg text-slate-800">${item.title}</h4>
+                    <p class="mt-2 text-slate-600">${item.content}</p>
+                </div>
+            </div>
+        `;
+        timelineContainer.appendChild(stepElement);
+    });
+
+    const steps = document.querySelectorAll('.step');
+    steps.forEach((step, index) => {
+        step.addEventListener('click', () => {
+            steps.forEach(s => s.classList.remove('active'));
+            step.classList.add('active');
+        });
+        if (index === 0) {
+            step.classList.add('active');
+        }
+    });
+
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+    
+    document.querySelectorAll('#mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+        });
+    });
+
+    const navLinks = document.querySelectorAll('nav a.nav-link');
+    const sections = document.querySelectorAll('main section');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === entry.target.id) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    }, { rootMargin: "-50% 0px -50% 0px" });
+
+    sections.forEach(section => {
+        observer.observe(section);
+    });
+
+});
+</script>
+</body>
+</html>

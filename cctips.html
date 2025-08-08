@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Tips & Tricks - Community Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .star-rating {
+            color: #fbbf24;
+        }
+        
+        .tip-card {
+            transition: all 0.3s ease;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .tip-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .difficulty-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
+            font-weight: 500;
+        }
+        
+        .beginner { background-color: #dcfce7; color: #166534; }
+        .intermediate { background-color: #fef3c7; color: #92400e; }
+        .advanced { background-color: #fecaca; color: #991b1b; }
+        
+        .category-section {
+            scroll-margin-top: 100px;
+        }
+        
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        
+        .nav-link:hover {
+            color: #3b82f6;
+        }
+        
+        .filter-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .filter-btn.active {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .search-box {
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        @media print {
+            .no-print { display: none !important; }
+            .tip-card { break-inside: avoid; }
+        }
+        
+        .tag {
+            background-color: #e5e7eb;
+            color: #374151;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-lg border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">
+                        <i class="fas fa-code text-blue-600 mr-3"></i>
+                        Claude Code Tips & Tricks
+                    </h1>
+                    <p class="text-gray-600 mt-1">Community-curated guide from Reddit discussions</p>
+                </div>
+                <div class="no-print flex space-x-4">
+                    <button onclick="showAllTips()" class="filter-btn px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">All Tips</button>
+                    <button onclick="filterByRating(5)" class="filter-btn px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50">5-Star Only</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Quick Stats Dashboard -->
+    <div class="bg-blue-600 text-white py-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <div class="text-3xl font-bold">50+</div>
+                    <div class="text-blue-100">Tips Collected</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold">10</div>
+                    <div class="text-blue-100">Reddit Sources</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold">6</div>
+                    <div class="text-blue-100">Categories</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold">15</div>
+                    <div class="text-blue-100">5-Star Tips</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filters -->
+    <div class="no-print bg-white border-b border-gray-200 py-4">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
+                <div class="relative flex-1 max-w-md">
+                    <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search tips..." class="search-box w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterByDifficulty('beginner')" class="filter-btn px-3 py-1 rounded-full border border-gray-300 text-sm">Beginner</button>
+                    <button onclick="filterByDifficulty('intermediate')" class="filter-btn px-3 py-1 rounded-full border border-gray-300 text-sm">Intermediate</button>
+                    <button onclick="filterByDifficulty('advanced')" class="filter-btn px-3 py-1 rounded-full border border-gray-300 text-sm">Advanced</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="max-w-7xl mx-auto px-6 py-8">
+        
+        <!-- Essential Setup & Configuration -->
+        <section id="setup" class="category-section mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-cog text-blue-600 mr-3"></i>
+                Essential Setup & Configuration
+                <span class="ml-2 bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Top Priority</span>
+            </h2>
+            <div class="grid gap-6">
+                
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="5" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Create and Maintain CLAUDE.md Files</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Essential</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">The CLAUDE.md file is your project's instruction manual for Claude. It should contain project context, coding standards, and behavioral guidelines.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Example CLAUDE.md structure:</h4>
+                        <pre class="text-sm text-gray-700">
+# Project Overview
+This is a React/Node.js web application for...
+
+# Critical Rules - DO NOT VIOLATE
+- NEVER create mock data or simplified components unless explicitly told
+- ALWAYS check documentation before making changes
+- NEVER replace existing complex components with simplified versions
+
+# Tech Stack
+- Frontend: React, TypeScript, Tailwind CSS
+- Backend: Node.js, Express, Prisma
+- Database: PostgreSQL</pre>
+                    </div>
+                    <p class="text-gray-600 mb-4">You can have multiple CLAUDE.md files in different directories for context-specific instructions. Use the # command to quickly add rules based on mistakes Claude makes.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>, <a href="https://www.reddit.com/r/ClaudeAI/comments/1kivv0w/the_ultimate_vibe_coding_guide/" class="text-blue-600 hover:underline">Ultimate Vibe Coding Guide</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="5" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Always Start with /init Command</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Essential</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">The /init command is your starting point for any Claude Code session. It analyzes your project structure and creates an initial CLAUDE.md file with context about your codebase.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Usage:</h4>
+                        <code class="text-sm text-gray-700">cd your-project-directory<br>claude<br>/init</code>
+                    </div>
+                    <p class="text-gray-600 mb-4">This command helps Claude understand your project structure, dependencies, and existing code patterns before you start working together.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Use Context7 MCP Server for Updated Documentation</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Documentation</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Claude's training data has cutoff dates, so it might suggest outdated APIs. Context7 MCP Server provides Claude with up-to-date documentation for better accuracy.</p>
+                    <p class="text-gray-600 mb-4">This is especially useful for rapidly evolving libraries like Tailwind CSS 4.x or new framework versions that Claude might not be familiar with.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Workflow Management -->
+        <section id="workflow" class="category-section mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-tasks text-blue-600 mr-3"></i>
+                Workflow Management
+                <span class="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">High Priority</span>
+            </h2>
+            <div class="grid gap-6">
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="5" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Use Plan Mode (Shift+Tab Twice)</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Game Changer</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Plan Mode automatically creates detailed plans from vague prompts before jumping into implementation. This feature breaks down complex tasks into manageable steps.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">How to activate:</h4>
+                        <code class="text-sm text-gray-700">Press Shift + Tab twice in Claude Code</code>
+                    </div>
+                    <p class="text-gray-600 mb-4">Multiple community members cite this as a game-changer for project planning and execution. It helps Claude think through requirements before coding.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="5" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Master Context Management: /compact and /clear</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Critical</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Proper context management is crucial for maintaining Claude's performance. Use /compact to compress context while keeping important information, and /clear for fresh starts.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Best practices:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Use /compact manually before reaching auto-compact limit</li>
+                            <li>Create .md summaries before /clear to maintain project memory</li>
+                            <li>Watch the context indicator - don't let it auto-compact mid-feature</li>
+                            <li>Start fresh sessions after major milestones</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 mb-4">If Claude hits auto-compact during complex features, it often loses important context and starts making mistakes or recreating files.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Create Session Handoff Documentation</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Continuity</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">When ending sessions, have Claude create detailed handoff documentation to ensure smooth transitions between sessions.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Handoff prompt template:</h4>
+                        <pre class="text-sm text-gray-700">
+"Please update TODO.md, CLAUDE.md, and create HANDOFF_SUMMARY.md with:
+- Our overall goal for this session
+- Key decisions made or approaches attempted  
+- Specific code changes made
+- Current state of in-progress tasks
+- Next steps when we resume"</pre>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Prompting & Communication -->
+        <section id="prompting" class="category-section mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-comments text-blue-600 mr-3"></i>
+                Prompting & Communication
+                <span class="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">High Priority</span>
+            </h2>
+            <div class="grid gap-6">
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="5" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Implement Anti-Assumption Framework</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Communication</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Claude often makes dangerous assumptions like "API didn't return data so endpoint doesn't exist" or "room is dark so sun exploded." Train it to investigate rather than assume.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Add to your CLAUDE.md:</h4>
+                        <pre class="text-sm text-gray-700">
+# Anti-Assumption Framework
+- Never assume conditions: investigate before concluding
+- Verify before acting: test conditions and validate assumptions
+- Ask for clarification when instructions are unclear
+- Question conclusions: don't jump to worst-case scenarios</pre>
+                    </div>
+                    <p class="text-gray-600 mb-4">This prevents Claude from making destructive changes based on incorrect assumptions about your codebase or environment.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Use Confirmation Protocols</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Safety</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">End prompts with confirmation requests to prevent Claude from making unwanted assumptions or changes.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Effective confirmation prompt:</h4>
+                        <code class="text-sm text-gray-700">"Before you proceed, confirm you understand and tell me your plan. Do not make assumptions, ask questions if anything is unclear."</code>
+                    </div>
+                    <p class="text-gray-600 mb-4">This simple addition prevents countless headaches from Claude going off in wrong directions or removing features you didn't ask it to touch.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Don't Hesitate to Interrupt and Redirect</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Control</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Press Escape to interrupt Claude when it goes off track. It's better to stop early than let it continue down the wrong path.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">When to interrupt:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Claude starts making changes you didn't request</li>
+                            <li>It's heading in the wrong direction</li>
+                            <li>Making dangerous assumptions about your code</li>
+                            <li>Deleting or refactoring without permission</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 mb-4">Claude doesn't remember being interrupted, so you can redirect without losing context. Sometimes you need to be firm or even "mean" to get it back on track.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="3" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Use "Thinking" Triggers for Complex Problems</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Problem Solving</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">When Claude struggles with complex issues, use words like "think," "ultrathink," or "carefully think" to activate deeper reasoning modes.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Magic words to try:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>"ultrathink" - For when you're really stuck</li>
+                            <li>"carefully think" - For more thoughtful decisions</li>
+                            <li>"think hard" - For complex problems</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 mb-4">Community reports that these "magic words" seem to trigger more thorough analysis and better problem-solving.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Code Quality & Development -->
+        <section id="quality" class="category-section mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-code-branch text-blue-600 mr-3"></i>
+                Code Quality & Development
+                <span class="ml-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Medium-High Priority</span>
+            </h2>
+            <div class="grid gap-6">
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="5" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Always Use Version Control with Frequent Commits</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Safety</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Git is your safety net with Claude Code. Commit after every major feature or change, and have Claude write meaningful commit messages.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Best practices:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Commit after every successful feature implementation</li>
+                            <li>Ask Claude to write descriptive commit messages</li>
+                            <li>Use branching for experimental features</li>
+                            <li>Never let working code get broken without a backup</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 mb-4">Multiple community members emphasize this as the difference between disaster and productivity when working with AI coding tools.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Implement Modular Design Principles</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Architecture</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Break code into small files and methods/classes. This makes it easier to provide specific context to Claude and manage large projects.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Modular benefits with Claude:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Easier to provide specific context for changes</li>
+                            <li>Reduces risk of Claude modifying unrelated code</li>
+                            <li>Makes debugging and testing more manageable</li>
+                            <li>Allows for focused, incremental development</li>
+                        </ul>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1fl5j3t/general_tips_for_developing_a_large_project_using/" class="text-blue-600 hover:underline">Reddit - Large Project Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Enforce TypeScript and Linting Standards</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Code Quality</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Add explicit requirements for TypeScript types and linting compliance to your CLAUDE.md. Make Claude run build checks before considering tasks complete.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Add to CLAUDE.md:</h4>
+                        <pre class="text-sm text-gray-700">
+# TypeScript and Linting
+- ALWAYS add explicit types to function parameters and return types
+- ALWAYS run `npm run build` before considering changes complete
+- Fix all linter and TypeScript errors immediately
+- Check each file for type errors when making changes</pre>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="3" data-difficulty="advanced">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Security Best Practices Integration</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge advanced">Advanced</span>
+                            <span class="tag">Security</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Use external tools like Gemini 2.5 Pro to review Claude's code for security vulnerabilities and bad patterns, then feed the insights back to Claude for fixes.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Security review workflow:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Copy completed feature code to Gemini 2.5 Pro</li>
+                            <li>Ask it to act as security expert and spot flaws</li>
+                            <li>Get insights about vulnerabilities and bad patterns</li>
+                            <li>Feed insights back to Claude for fixes</li>
+                            <li>Iterate until security review passes</li>
+                        </ul>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1kivv0w/the_ultimate_vibe_coding_guide/" class="text-blue-600 hover:underline">Reddit - Ultimate Vibe Coding Guide</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Advanced Techniques -->
+        <section id="advanced" class="category-section mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-rocket text-blue-600 mr-3"></i>
+                Advanced Techniques
+                <span class="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Medium Priority</span>
+            </h2>
+            <div class="grid gap-6">
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="advanced">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Multi-Agent Workflows with Task-Master</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge advanced">Advanced</span>
+                            <span class="tag">Multi-Agent</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Use tools like Task-Master.dev to break complex projects into subtasks, then delegate work across multiple Claude Code instances running in parallel.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Multi-agent setup:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Use Task-Master to create detailed task breakdowns</li>
+                            <li>Run multiple Claude Code instances in different terminals</li>
+                            <li>Assign specialized roles (frontend, backend, testing)</li>
+                            <li>Coordinate through shared documentation files</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 mb-4">Community reports building complete applications (like Firebase forums) in single sessions using this approach.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Image and Screenshot Integration</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Visual</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Claude Code can work with screenshots, mockups, and charts surprisingly well. Drag, paste, or provide paths to visual references.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Visual workflow tips:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Take screenshots of desired UI layouts</li>
+                            <li>Use mockups from design tools</li>
+                            <li>Create feedback loops: screenshot → implement → iterate</li>
+                            <li>Automate screenshots with Puppeteer MCP server</li>
+                        </ul>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="3" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Custom Slash Commands</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Efficiency</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Create custom slash commands for frequently used prompts. Store them in ~/claude/commands folder for reuse across projects.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Common custom commands:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>/lint - Run linting and fix common issues</li>
+                            <li>/refactor - Apply consistent coding patterns</li>
+                            <li>/test - Generate unit tests for current file</li>
+                            <li>/review - Code review checklist</li>
+                        </ul>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="3" data-difficulty="advanced">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Voice Input with Wispr Flow</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge advanced">Advanced</span>
+                            <span class="tag">Accessibility</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Use voice input tools like Wispr Flow for hands-free prompting. Press fn, speak your prompt, and it gets transcribed for Claude.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Voice input benefits:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Faster than typing for long, descriptive prompts</li>
+                            <li>Natural conversation flow</li>
+                            <li>Useful when hands are busy or tired</li>
+                            <li>Alternative tools: Aqua Voice, Dictation Daddy</li>
+                        </ul>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Cost & Performance Optimization -->
+        <section id="optimization" class="category-section mb-12">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                <i class="fas fa-tachometer-alt text-blue-600 mr-3"></i>
+                Cost & Performance Optimization
+                <span class="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Medium Priority</span>
+            </h2>
+            <div class="grid gap-6">
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="5" data-difficulty="beginner">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Claude Max Subscription vs API Costs</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="tag">Cost Savings</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">For heavy usage, Claude Max ($100/month) provides significantly better value than pay-per-use API costs, which can reach hundreds of dollars quickly.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Cost comparison examples:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Project initialization: ~$0.70 via API</li>
+                            <li>Complex feature implementation: ~$1.30 via API</li>
+                            <li>Heavy daily usage: $100+ per day via API</li>
+                            <li>Max subscription: Unlimited usage for $100/month</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 mb-4">Use ccusage command to monitor your API savings and validate the subscription value.</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Optimal Coding Schedule</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Performance</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Code during USA morning hours when server loads are lower. You'll experience faster responses and fewer 429 rate limit errors.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Performance tips:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Best performance: USA morning hours (EST/PST AM)</li>
+                            <li>Avoid peak usage times when possible</li>
+                            <li>Monitor for 429 errors as usage indicators</li>
+                            <li>Plan complex tasks during optimal hours</li>
+                        </ul>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="4" data-difficulty="advanced">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Mobile Development with SSH</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge advanced">Advanced</span>
+                            <span class="tag">Productivity</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Set up SSH access to your development machine and use apps like Termius to continue coding from anywhere, including "toilet coding" sessions.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">Mobile setup benefits:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Continue sessions during breaks</li>
+                            <li>Check on long-running tasks remotely</li>
+                            <li>Quick fixes and monitoring on the go</li>
+                            <li>Utilize Tailscale for secure global access</li>
+                        </ul>
+                    </div>
+                    <p class="text-gray-600 mb-4">Community joke: "Download some phone SSH app so you can keep prompting from the toilet" - but it's surprisingly practical!</p>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+                <div class="tip-card bg-white rounded-lg shadow-md p-6" data-rating="3" data-difficulty="intermediate">
+                    <div class="flex items-start justify-between mb-4">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900">Use External Memory and Documentation</h3>
+                            <div class="star-rating text-sm mt-1">
+                                <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="tag">Memory</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-600 mb-4">Maintain external documentation and use tools like GitHub issues or scratchpads to plan work outside of Claude's context window.</p>
+                    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+                        <h4 class="font-semibold text-gray-800 mb-2">External memory strategies:</h4>
+                        <ul class="text-sm text-gray-700 list-disc list-inside space-y-1">
+                            <li>Use GitHub issues for feature planning</li>
+                            <li>Maintain project wikis or notion docs</li>
+                            <li>Create scratchpad files for brainstorming</li>
+                            <li>Document architectural decisions externally</li>
+                        </ul>
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <i class="fas fa-external-link-alt mr-1"></i>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Quick Reference Sidebar -->
+        <aside class="no-print fixed right-4 top-1/2 transform -translate-y-1/2 w-64 bg-white rounded-lg shadow-lg p-4 border border-gray-200 z-50 max-h-96 overflow-y-auto hidden lg:block">
+            <h3 class="font-semibold text-gray-900 mb-3">Quick Reference</h3>
+            <div class="space-y-2 text-sm">
+                <div class="border-b border-gray-200 pb-2">
+                    <h4 class="font-medium text-gray-800">Essential Commands</h4>
+                    <div class="text-gray-600 mt-1">
+                        <div>/init - Initialize project</div>
+                        <div>/compact - Compress context</div>
+                        <div>/clear - Fresh start</div>
+                        <div>Shift+Tab+Tab - Plan Mode</div>
+                    </div>
+                </div>
+                <div class="border-b border-gray-200 pb-2">
+                    <h4 class="font-medium text-gray-800">Top 5-Star Tips</h4>
+                    <div class="text-gray-600 mt-1 text-xs">
+                        <div>• CLAUDE.md files</div>
+                        <div>• Plan Mode usage</div>
+                        <div>• Context management</div>
+                        <div>• Anti-assumption framework</div>
+                        <div>• Version control</div>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-800">Remember</h4>
+                    <div class="text-gray-600 mt-1 text-xs">
+                        "Just because the room is dark doesn't mean the sun exploded" - Always investigate before assuming!
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-8 mt-16">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">About This Guide</h3>
+                    <p class="text-gray-300 text-sm">This community-curated guide aggregates tips and tricks from Reddit discussions about Claude Code. Content is based on real user experiences and feedback.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Disclaimer</h3>
+                    <p class="text-gray-300 text-sm">Tips are sourced from community discussions and may not reflect official Anthropic recommendations. Always test suggestions in your specific environment.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
+                    <div class="space-y-2 text-sm">
+                        <a href="https://www.anthropic.com/engineering/claude-code-best-practices" class="text-blue-400 hover:text-blue-300 block">
+                            <i class="fas fa-external-link-alt mr-1"></i>Official Claude Code Guide
+                        </a>
+                        <a href="https://docs.anthropic.com/" class="text-blue-400 hover:text-blue-300 block">
+                            <i class="fas fa-external-link-alt mr-1"></i>Anthropic Documentation
+                        </a>
+                        <div class="text-gray-400 mt-4">Last updated: January 2025</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const tips = document.querySelectorAll('.tip-card');
+            
+            tips.forEach(tip => {
+                const content = tip.textContent.toLowerCase();
+                if (content.includes(searchTerm)) {
+                    tip.style.display = 'block';
+                } else {
+                    tip.style.display = 'none';
+                }
+            });
+        });
+
+        // Filter by rating
+        function filterByRating(rating) {
+            const tips = document.querySelectorAll('.tip-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            tips.forEach(tip => {
+                const tipRating = parseInt(tip.dataset.rating);
+                if (rating === 'all' || tipRating >= rating) {
+                    tip.style.display = 'block';
+                } else {
+                    tip.style.display = 'none';
+                }
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Filter by difficulty
+        function filterByDifficulty(difficulty) {
+            const tips = document.querySelectorAll('.tip-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            tips.forEach(tip => {
+                const tipDifficulty = tip.dataset.difficulty;
+                if (difficulty === 'all' || tipDifficulty === difficulty) {
+                    tip.style.display = 'block';
+                } else {
+                    tip.style.display = 'none';
+                }
+            });
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // Show all tips
+        function showAllTips() {
+            const tips = document.querySelectorAll('.tip-card');
+            const buttons = document.querySelectorAll('.filter-btn');
+            
+            // Remove active class from all buttons
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            tips.forEach(tip => {
+                tip.style.display = 'block';
+            });
+            
+            // Add active class to "All Tips" button
+            event.target.classList.add('active');
+            
+            // Clear search
+            document.getElementById('searchInput').value = '';
+        }
+
+        // Smooth scrolling for anchor links
+        document.addEventListener('DOMContentLoaded', function() {
+            const links = document.querySelectorAll('a[href^="#"]');
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Add click-to-expand functionality for tip cards
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipCards = document.querySelectorAll('.tip-card');
+            tipCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // Toggle expanded class for potential future enhancements
+                    this.classList.toggle('expanded');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

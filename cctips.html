@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Claude Code Tips & Tricks - Community Guide</title>
+    <link rel="icon" href="/tiger.ico">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
-            font-family: 'Inter', sans-serif;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         }
         
         .star-rating {
@@ -18,7 +19,7 @@
         
         .tip-card {
             transition: all 0.3s ease;
-            border-left: 4px solid #3b82f6;
+            border-left: 4px solid #0D7377;
         }
         
         .tip-card:hover {
@@ -38,7 +39,7 @@
         .advanced { background-color: #fecaca; color: #991b1b; }
         
         .category-section {
-            scroll-margin-top: 100px;
+            scroll-margin-top: 120px;
         }
         
         .nav-link {
@@ -46,7 +47,7 @@
         }
         
         .nav-link:hover {
-            color: #3b82f6;
+            color: #0D7377;
         }
         
         .filter-btn {
@@ -54,7 +55,7 @@
         }
         
         .filter-btn.active {
-            background-color: #3b82f6;
+            background-color: #0D7377;
             color: white;
         }
         
@@ -63,7 +64,7 @@
         }
         
         .search-box:focus {
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.1);
         }
         
         @media print {
@@ -82,13 +83,28 @@
     </style>
 </head>
 <body class="bg-gray-50">
-    <!-- Header -->
+    <!-- Global Navigation -->
+    <nav class="site-nav" style="position: sticky; top: 0; z-index: 100;">
+      <div class="container">
+        <a href="/" class="nav-logo">Christine Hu</a>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/blog.html">Writing</a></li>
+          <li><a href="/#projects">Projects</a></li>
+          <li><a href="https://github.com/christine1729" target="_blank" rel="noopener noreferrer" class="gh-link" aria-label="GitHub"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Page Header -->
     <header class="bg-white shadow-lg border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">
-                        <i class="fas fa-code text-blue-600 mr-3"></i>
+                    <h1 class="text-3xl font-bold text-gray-900" style="font-family: 'DM Serif Display', Georgia, serif; font-weight: 400;">
+                        <i class="fas fa-code text-teal-700 mr-3"></i>
                         Claude Code Tips & Tricks
                     </h1>
                     <p class="text-gray-600 mt-1">Community-curated guide from Reddit discussions</p>
@@ -102,24 +118,24 @@
     </header>
 
     <!-- Quick Stats Dashboard -->
-    <div class="bg-blue-600 text-white py-8">
+    <div class="bg-teal-700 text-white py-8">
         <div class="max-w-7xl mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div class="text-center">
                     <div class="text-3xl font-bold">50+</div>
-                    <div class="text-blue-100">Tips Collected</div>
+                    <div class="text-teal-100">Tips Collected</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold">10</div>
-                    <div class="text-blue-100">Reddit Sources</div>
+                    <div class="text-teal-100">Reddit Sources</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold">6</div>
-                    <div class="text-blue-100">Categories</div>
+                    <div class="text-teal-100">Categories</div>
                 </div>
                 <div class="text-center">
                     <div class="text-3xl font-bold">15</div>
-                    <div class="text-blue-100">5-Star Tips</div>
+                    <div class="text-teal-100">5-Star Tips</div>
                 </div>
             </div>
         </div>
@@ -131,7 +147,7 @@
             <div class="flex flex-col md:flex-row gap-4 items-center justify-between">
                 <div class="relative flex-1 max-w-md">
                     <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="searchInput" placeholder="Search tips..." class="search-box w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <input type="text" id="searchInput" placeholder="Search tips..." class="search-box w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none">
                 </div>
                 <div class="flex flex-wrap gap-2">
                     <button onclick="filterByDifficulty('beginner')" class="filter-btn px-3 py-1 rounded-full border border-gray-300 text-sm">Beginner</button>
@@ -148,7 +164,7 @@
         <!-- Essential Setup & Configuration -->
         <section id="setup" class="category-section mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <i class="fas fa-cog text-blue-600 mr-3"></i>
+                <i class="fas fa-cog text-teal-700 mr-3"></i>
                 Essential Setup & Configuration
                 <span class="ml-2 bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full">Top Priority</span>
             </h2>
@@ -187,7 +203,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">You can have multiple CLAUDE.md files in different directories for context-specific instructions. Use the # command to quickly add rules based on mistakes Claude makes.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>, <a href="https://www.reddit.com/r/ClaudeAI/comments/1kivv0w/the_ultimate_vibe_coding_guide/" class="text-blue-600 hover:underline">Ultimate Vibe Coding Guide</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-teal-700 hover:underline">Reddit - Claude Code Beast</a>, <a href="https://www.reddit.com/r/ClaudeAI/comments/1kivv0w/the_ultimate_vibe_coding_guide/" class="text-teal-700 hover:underline">Ultimate Vibe Coding Guide</a>
                     </div>
                 </div>
 
@@ -212,7 +228,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">This command helps Claude understand your project structure, dependencies, and existing code patterns before you start working together.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -233,7 +249,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">This is especially useful for rapidly evolving libraries like Tailwind CSS 4.x or new framework versions that Claude might not be familiar with.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-teal-700 hover:underline">Reddit - Claude Code Beginner Tips</a>
                     </div>
                 </div>
 
@@ -243,7 +259,7 @@ This is a React/Node.js web application for...
         <!-- Workflow Management -->
         <section id="workflow" class="category-section mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <i class="fas fa-tasks text-blue-600 mr-3"></i>
+                <i class="fas fa-tasks text-teal-700 mr-3"></i>
                 Workflow Management
                 <span class="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">High Priority</span>
             </h2>
@@ -270,7 +286,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">Multiple community members cite this as a game-changer for project planning and execution. It helps Claude think through requirements before coding.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -300,7 +316,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">If Claude hits auto-compact during complex features, it often loses important context and starts making mistakes or recreating files.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-teal-700 hover:underline">Reddit - Claude Code Beast</a>
                     </div>
                 </div>
 
@@ -330,7 +346,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -340,7 +356,7 @@ This is a React/Node.js web application for...
         <!-- Prompting & Communication -->
         <section id="prompting" class="category-section mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <i class="fas fa-comments text-blue-600 mr-3"></i>
+                <i class="fas fa-comments text-teal-700 mr-3"></i>
                 Prompting & Communication
                 <span class="ml-2 bg-orange-100 text-orange-800 text-xs px-2 py-1 rounded-full">High Priority</span>
             </h2>
@@ -372,7 +388,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">This prevents Claude from making destructive changes based on incorrect assumptions about your codebase or environment.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -397,7 +413,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">This simple addition prevents countless headaches from Claude going off in wrong directions or removing features you didn't ask it to touch.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -427,7 +443,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">Claude doesn't remember being interrupted, so you can redirect without losing context. Sometimes you need to be firm or even "mean" to get it back on track.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -456,7 +472,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">Community reports that these "magic words" seem to trigger more thorough analysis and better problem-solving.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -466,7 +482,7 @@ This is a React/Node.js web application for...
         <!-- Code Quality & Development -->
         <section id="quality" class="category-section mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <i class="fas fa-code-branch text-blue-600 mr-3"></i>
+                <i class="fas fa-code-branch text-teal-700 mr-3"></i>
                 Code Quality & Development
                 <span class="ml-2 bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">Medium-High Priority</span>
             </h2>
@@ -498,7 +514,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">Multiple community members emphasize this as the difference between disaster and productivity when working with AI coding tools.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -527,7 +543,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1fl5j3t/general_tips_for_developing_a_large_project_using/" class="text-blue-600 hover:underline">Reddit - Large Project Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1fl5j3t/general_tips_for_developing_a_large_project_using/" class="text-teal-700 hover:underline">Reddit - Large Project Tips</a>
                     </div>
                 </div>
 
@@ -556,7 +572,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-teal-700 hover:underline">Reddit - Claude Code Beast</a>
                     </div>
                 </div>
 
@@ -586,7 +602,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1kivv0w/the_ultimate_vibe_coding_guide/" class="text-blue-600 hover:underline">Reddit - Ultimate Vibe Coding Guide</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1kivv0w/the_ultimate_vibe_coding_guide/" class="text-teal-700 hover:underline">Reddit - Ultimate Vibe Coding Guide</a>
                     </div>
                 </div>
 
@@ -596,7 +612,7 @@ This is a React/Node.js web application for...
         <!-- Advanced Techniques -->
         <section id="advanced" class="category-section mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <i class="fas fa-rocket text-blue-600 mr-3"></i>
+                <i class="fas fa-rocket text-teal-700 mr-3"></i>
                 Advanced Techniques
                 <span class="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Medium Priority</span>
             </h2>
@@ -628,7 +644,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">Community reports building complete applications (like Firebase forums) in single sessions using this approach.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-teal-700 hover:underline">Reddit - Claude Code Beast</a>
                     </div>
                 </div>
 
@@ -657,7 +673,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-teal-700 hover:underline">Reddit - Claude Code Beginner Tips</a>
                     </div>
                 </div>
 
@@ -686,7 +702,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-teal-700 hover:underline">Reddit - Claude Code Beginner Tips</a>
                     </div>
                 </div>
 
@@ -715,7 +731,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-blue-600 hover:underline">Reddit - Claude Code Beginner Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1m1ihia/claude_code_tips_i_wish_i_knew_as_a_beginner/" class="text-teal-700 hover:underline">Reddit - Claude Code Beginner Tips</a>
                     </div>
                 </div>
 
@@ -725,7 +741,7 @@ This is a React/Node.js web application for...
         <!-- Cost & Performance Optimization -->
         <section id="optimization" class="category-section mb-12">
             <h2 class="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                <i class="fas fa-tachometer-alt text-blue-600 mr-3"></i>
+                <i class="fas fa-tachometer-alt text-teal-700 mr-3"></i>
                 Cost & Performance Optimization
                 <span class="ml-2 bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">Medium Priority</span>
             </h2>
@@ -757,7 +773,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">Use ccusage command to monitor your API savings and validate the subscription value.</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-blue-600 hover:underline">Reddit - Claude Code Beast</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1ko5pxk/claude_code_is_a_beast_tips_from_a_week_of/" class="text-teal-700 hover:underline">Reddit - Claude Code Beast</a>
                     </div>
                 </div>
 
@@ -786,7 +802,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -816,7 +832,7 @@ This is a React/Node.js web application for...
                     <p class="text-gray-600 mb-4">Community joke: "Download some phone SSH app so you can keep prompting from the toilet" - but it's surprisingly practical!</p>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -845,7 +861,7 @@ This is a React/Node.js web application for...
                     </div>
                     <div class="text-sm text-gray-500">
                         <i class="fas fa-external-link-alt mr-1"></i>
-                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-blue-600 hover:underline">Reddit - Claude Code Max Tips</a>
+                        Sources: <a href="https://www.reddit.com/r/ClaudeAI/comments/1l8g36q/just_subscribed_to_claude_code_max_what_is_one/" class="text-teal-700 hover:underline">Reddit - Claude Code Max Tips</a>
                     </div>
                 </div>
 
@@ -887,31 +903,16 @@ This is a React/Node.js web application for...
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-8 mt-16">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">About This Guide</h3>
-                    <p class="text-gray-300 text-sm">This community-curated guide aggregates tips and tricks from Reddit discussions about Claude Code. Content is based on real user experiences and feedback.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Disclaimer</h3>
-                    <p class="text-gray-300 text-sm">Tips are sourced from community discussions and may not reflect official Anthropic recommendations. Always test suggestions in your specific environment.</p>
-                </div>
-                <div>
-                    <h3 class="text-lg font-semibold mb-4">Resources</h3>
-                    <div class="space-y-2 text-sm">
-                        <a href="https://www.anthropic.com/engineering/claude-code-best-practices" class="text-blue-400 hover:text-blue-300 block">
-                            <i class="fas fa-external-link-alt mr-1"></i>Official Claude Code Guide
-                        </a>
-                        <a href="https://docs.anthropic.com/" class="text-blue-400 hover:text-blue-300 block">
-                            <i class="fas fa-external-link-alt mr-1"></i>Anthropic Documentation
-                        </a>
-                        <div class="text-gray-400 mt-4">Last updated: January 2025</div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <footer class="site-footer" style="margin-top: 48px;">
+      <div class="container">
+        <span class="footer-left">Christine Hu &copy; 2025</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/christine1729" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog.html">Writing</a></li>
+          <li><a href="https://www.anthropic.com/engineering/claude-code-best-practices" target="_blank" rel="noopener noreferrer">Official Claude Code Guide</a></li>
+        </ul>
+      </div>
     </footer>
 
     <script>

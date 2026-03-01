@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Entity-Aware Summarization for Sponsored Search</title>
+    <link rel="icon" href="/tiger.ico">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <style>
         * {
             margin: 0;
@@ -12,53 +14,55 @@
         }
 
         :root {
-            --primary: #2563eb;
-            --secondary: #7c3aed;
-            --accent: #06b6d4;
+            --primary: #0D7377;
+            --secondary: #0a5c5f;
+            --accent: #14a085;
             --dark: #1e293b;
             --light: #f8fafc;
-            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+            --gradient: linear-gradient(135deg, #0D7377, #0a5c5f);
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             line-height: 1.6;
             color: var(--dark);
             overflow-x: hidden;
         }
 
-        /* Navigation */
-        nav {
+        /* Page-internal navigation (below site nav) */
+        .page-nav {
             position: fixed;
-            top: 0;
+            top: var(--nav-height, 64px);
             width: 100%;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
-            z-index: 1000;
+            z-index: 99;
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
 
-        nav ul {
+        .page-nav ul {
             display: flex;
             justify-content: center;
             list-style: none;
-            padding: 1.5rem;
+            padding: 1rem 1.5rem;
             gap: 2rem;
         }
 
-        nav a {
+        .page-nav a {
             text-decoration: none;
             color: var(--dark);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
             font-weight: 500;
             transition: all 0.3s ease;
             position: relative;
         }
 
-        nav a:hover {
+        .page-nav a:hover {
             color: var(--primary);
         }
 
-        nav a::after {
+        .page-nav a::after {
             content: '';
             position: absolute;
             bottom: -5px;
@@ -69,14 +73,14 @@
             transition: width 0.3s ease;
         }
 
-        nav a:hover::after {
+        .page-nav a:hover::after {
             width: 100%;
         }
 
         /* Sections */
         section {
             min-height: 100vh;
-            padding: 5rem 2rem;
+            padding: 7rem 2rem 5rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -119,10 +123,14 @@
             z-index: 1;
         }
 
+        h1, h2, h3, h4 {
+            font-family: 'DM Serif Display', Georgia, serif;
+        }
+
         h1 {
             font-size: 3.5rem;
             margin-bottom: 1.5rem;
-            font-weight: 700;
+            font-weight: 400;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             animation: fadeInUp 1s ease;
         }
@@ -386,19 +394,13 @@
             font-weight: bold;
         }
 
-        /* Footer */
-        footer {
-            background: var(--dark);
-            color: white;
-            text-align: center;
-            padding: 3rem;
-        }
+        /* Footer - handled by shared main.css */
 
         /* Responsive */
         @media (max-width: 768px) {
             h1 { font-size: 2rem; }
             h2 { font-size: 1.8rem; }
-            nav ul { gap: 1rem; font-size: 0.9rem; }
+            .page-nav ul { gap: 1rem; font-size: 0.9rem; }
             .pipeline-step::after { display: none; }
         }
 
@@ -442,8 +444,23 @@
     </style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav>
+    <!-- Global Navigation -->
+    <nav class="site-nav">
+      <div class="container">
+        <a href="/" class="nav-logo">Christine Hu</a>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/blog.html">Writing</a></li>
+          <li><a href="/#projects">Projects</a></li>
+          <li><a href="https://github.com/christine1729" target="_blank" rel="noopener noreferrer" class="gh-link" aria-label="GitHub"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Page-internal Navigation -->
+    <nav class="page-nav">
         <ul>
             <li><a href="#hero">Home</a></li>
             <li><a href="#problem">Problem</a></li>
@@ -704,9 +721,15 @@
     </section>
 
     <!-- Footer -->
-    <footer>
-        <p>&copy; 2024 Entity-Aware Summarization Research. All rights reserved.</p>
-        <p style="margin-top: 1rem; opacity: 0.8;">Presented by Tsinghua University, Microsoft AI, and Microsoft Research</p>
+    <footer class="site-footer" style="margin-top: 0;">
+      <div class="container">
+        <span class="footer-left">Christine Hu &copy; 2025</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/christine1729" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog.html">Writing</a></li>
+        </ul>
+      </div>
     </footer>
 
     <script>
@@ -728,8 +751,8 @@
             observer.observe(el);
         });
 
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('nav a').forEach(anchor => {
+        // Smooth scrolling for page-internal navigation links
+        document.querySelectorAll('.page-nav a').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
@@ -740,7 +763,7 @@
         // Active navigation highlighting
         window.addEventListener('scroll', () => {
             const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('nav a');
+            const navLinks = document.querySelectorAll('.page-nav a');
             
             let current = '';
             sections.forEach(section => {

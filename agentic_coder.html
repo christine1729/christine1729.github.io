@@ -6,9 +6,10 @@
     <title>The Agentic Developer: An Interactive Guide</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" href="/tiger.ico">
+    <link rel="stylesheet" href="/assets/css/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Warm Neutrals (Slate, Stone, Amber) -->
     <!-- Application Structure Plan: A top-nav driven SPA with five thematic sections: 1. An introduction to set the stage. 2. An interactive "Head-to-Head" comparison to dynamically explore the differences between Claude Code and Cursor. 3. A "Mastering Workflows" section using interactive cards to detail advanced techniques and resources. 4. A "Prompting Guide" with an accordion UI to teach prompt engineering. 5. A "Build Your Agent" section that presents the 'Paper Buddy' tutorial as a clear, step-by-step process. This structure is chosen over a linear document to empower users to jump directly to the content most relevant to their needs, whether it's conceptual understanding, practical skills, or a hands-on project. -->
     <!-- Visualization & Content Choices: 
@@ -21,7 +22,7 @@
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: #f1f5f9; /* slate-100 */
             color: #1e293b; /* slate-800 */
         }
@@ -30,8 +31,8 @@
             border-bottom: 2px solid transparent;
         }
         .nav-link:hover, .nav-link.active {
-            color: #c2410c; /* orange-600 */
-            border-bottom-color: #c2410c; /* orange-600 */
+            color: #0D7377; /* teal */
+            border-bottom-color: #0D7377; /* teal */
         }
         .card {
             transition: transform 0.3s, box-shadow 0.3s;
@@ -46,11 +47,11 @@
             transition: max-height 0.5s ease-in-out;
         }
         .step.active .step-circle {
-            background-color: #c2410c; /* orange-600 */
+            background-color: #0D7377; /* teal */
             color: white;
         }
         .step.active .step-content {
-            border-color: #c2410c; /* orange-600 */
+            border-color: #0D7377; /* teal */
         }
         .chart-container {
             position: relative;
@@ -70,10 +71,26 @@
 </head>
 <body class="bg-slate-50 text-slate-800">
 
-    <header class="bg-white/80 backdrop-blur-lg sticky top-0 z-50 shadow-sm">
-        <nav class="container mx-auto px-6 py-4">
+    <!-- Global Navigation -->
+    <nav class="site-nav" style="position: sticky; top: 0; z-index: 100;">
+      <div class="container">
+        <a href="/" class="nav-logo">Christine Hu</a>
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li><a href="/blog.html">Writing</a></li>
+          <li><a href="/#projects">Projects</a></li>
+          <li><a href="https://github.com/christine1729" target="_blank" rel="noopener noreferrer" class="gh-link" aria-label="GitHub"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Page Navigation -->
+    <header class="bg-white/80 backdrop-blur-lg sticky top-16 z-40 shadow-sm">
+        <nav class="container mx-auto px-6 py-3">
             <div class="flex items-center justify-between">
-                <div class="text-2xl font-bold text-slate-900">
+                <div class="text-xl font-bold text-slate-900" style="font-family: 'DM Serif Display', Georgia, serif; font-weight: 400;">
                     The Agentic Developer
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
@@ -106,7 +123,7 @@
                 <p class="mt-6 text-lg md:text-xl text-slate-600 max-w-3xl mx-auto">
                     AI coding assistants are no longer just for autocompletion. They are active collaborators in the creative process. This guide provides an interactive exploration of two leading platforms, **Claude Code** and **Cursor**, helping you understand their philosophies, master their workflows, and build your first AI-powered agent.
                 </p>
-                <a href="#compare" class="mt-10 inline-block bg-orange-600 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-orange-700 transition-transform transform hover:scale-105">
+                <a href="#compare" class="mt-10 inline-block bg-teal-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg hover:bg-teal-800 transition-transform transform hover:scale-105">
                     Start Exploring
                 </a>
             </div>
@@ -132,7 +149,7 @@
                     <div class="bg-white p-8 rounded-2xl shadow-lg">
                         <h3 class="text-2xl font-semibold mb-6 text-center">Interactive Feature Comparison</h3>
                         <div id="comparison-buttons" class="flex flex-wrap justify-center gap-3 mb-6">
-                            <button data-feature="interface" class="comparison-btn active bg-orange-600 text-white px-4 py-2 rounded-full text-sm font-medium">Interface</button>
+                            <button data-feature="interface" class="comparison-btn active bg-teal-700 text-white px-4 py-2 rounded-full text-sm font-medium">Interface</button>
                             <button data-feature="execution" class="comparison-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-medium">Execution Model</button>
                             <button data-feature="context" class="comparison-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-medium">Context</button>
                             <button data-feature="integration" class="comparison-btn bg-slate-200 text-slate-700 px-4 py-2 rounded-full text-sm font-medium">Integration</button>
@@ -265,11 +282,15 @@
         </section>
     </main>
 
-    <footer class="bg-slate-800 text-slate-300 py-8">
-        <div class="container mx-auto px-6 text-center">
-            <p>Interactive Report generated from source material on Claude Code and Cursor.</p>
-            <p class="text-sm text-slate-400 mt-2">Designed to illustrate the power of interactive data presentation.</p>
-        </div>
+    <footer class="site-footer" style="margin-top: 0; background: var(--white);">
+      <div class="container">
+        <span class="footer-left">Christine Hu &copy; 2025</span>
+        <ul class="footer-links">
+          <li><a href="https://github.com/christine1729" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="/">Home</a></li>
+          <li><a href="/blog.html">Writing</a></li>
+        </ul>
+      </div>
     </footer>
 
 <script>
@@ -287,12 +308,12 @@ document.addEventListener('DOMContentLoaded', function() {
             label: 'Claude Code',
             data: [9, 4, 9, 3, 10, 2],
             fill: true,
-            backgroundColor: 'rgba(234, 88, 12, 0.2)',
-            borderColor: 'rgb(234, 88, 12)',
-            pointBackgroundColor: 'rgb(234, 88, 12)',
+            backgroundColor: 'rgba(13, 115, 119, 0.2)',
+            borderColor: 'rgb(13, 115, 119)',
+            pointBackgroundColor: 'rgb(13, 115, 119)',
             pointBorderColor: '#fff',
             pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgb(234, 88, 12)'
+            pointHoverBorderColor: 'rgb(13, 115, 119)'
         }, {
             label: 'Cursor',
             data: [5, 9, 3, 9, 2, 10],
@@ -390,10 +411,10 @@ document.addEventListener('DOMContentLoaded', function() {
         claudeContent.innerHTML = comparisonData[feature].claude;
         cursorContent.innerHTML = comparisonData[feature].cursor;
         comparisonBtns.forEach(btn => {
-            btn.classList.remove('active', 'bg-orange-600', 'text-white');
+            btn.classList.remove('active', 'bg-teal-700', 'text-white');
             btn.classList.add('bg-slate-200', 'text-slate-700');
             if (btn.dataset.feature === feature) {
-                btn.classList.add('active', 'bg-orange-600', 'text-white');
+                btn.classList.add('active', 'bg-teal-700', 'text-white');
                 btn.classList.remove('bg-slate-200', 'text-slate-700');
             }
         });

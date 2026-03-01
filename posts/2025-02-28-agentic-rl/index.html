@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="index, follow">
+    <title>Why Agentic RL Changes Everything | christine's nest</title>
+    <meta name="keywords" content="RL, agentic AI, reinforcement learning, LLM, video AI">
+    <meta name="description" content="Most RL research treats the agent as a policy optimizing a fixed reward. Agentic RL is different — the agent reasons, plans, uses tools, retries. Here's why that changes everything.">
+    <meta name="author" content="Christine Hu">
+    <link crossorigin="anonymous" href="/assets/css/stylesheet.min.949307ebc5cfbfc5e27c5ec3d332ce0be9137ec4137e02aefc52cf0267172e22.css" integrity="sha256-lJMH68XPv8XifF7D0zLOC+kTfsQTfgKu/FLPAmcXLiI=" rel="preload stylesheet" as="style">
+    <link rel="icon" href="/tiger.ico">
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="/" accesskey="h" title="christine's nest (Alt + H)">christine's nest</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li><a href="/" title="Home"><span>Home</span></a></li>
+            <li><a href="/blog.html" title="Writing"><span>Writing</span></a></li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+        why agentic RL changes everything
+    </h1>
+    <div class="post-meta"><span title="2025-02-28">Feb 28, 2025</span>&nbsp;&middot;&nbsp;5 min&nbsp;&middot;&nbsp;Christine Hu</div>
+  </header>
+  <div class="toc">
+    <details>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Contents</span>
+        </summary>
+        <div class="inner">
+            <ul>
+                <li><a href="#the-old-world">the old world: policy in, scalar out</a></li>
+                <li><a href="#whats-different">what's different now</a></li>
+                <li><a href="#reward-is-learned">reward is no longer a number from the environment</a></li>
+                <li><a href="#video-connection">the video AI connection</a></li>
+                <li><a href="#why-hard">why this is genuinely hard</a></li>
+                <li><a href="#personal">why i work on this</a></li>
+            </ul>
+        </div>
+    </details>
+  </div>
+
+  <div class="post-content">
+
+    <h2 id="the-old-world">the old world: policy in, scalar out</h2>
+    <p>
+        for the last decade, most RL research has followed the same template. you have an agent, it has a policy, and it interacts w/ an environment that hands back a scalar reward. the agent's job is to maximize cumulative reward. clean, elegant, mathematically tractable. also increasingly disconnected from what we actually want AI systems to do.
+    </p>
+    <p>
+        the classic setup — think Atari, MuJoCo, Go — assumes a fixed, fully specified reward function. the environment tells you exactly how well you did. +1 for winning, -1 for losing, maybe some shaped intermediate rewards if you're feeling generous. the agent doesn't need to <em>understand</em> anything. it just needs to find the policy that collects the most points.
+    </p>
+    <p>
+        this paradigm produced incredible results. AlphaGo, AlphaStar, OpenAI Five. but here's the thing: none of these agents <em>reason</em>. they don't plan in the way you and i plan. they don't try something, realize it's not working, switch tools, and try again. they're reactive. brilliant, superhuman pattern matchers — but reactive.
+    </p>
+
+    <h2 id="whats-different">what's different now</h2>
+    <p>
+        agentic RL is a fundamentally different proposition. the agent isn't just a policy network outputting actions. it's a system that reasons about its situation, decomposes problems into steps, uses external tools, evaluates its own progress, and retries when things go wrong. the "agent" in agentic RL is closer to what you'd recognize as intelligent behavior.
+    </p>
+    <p>
+        what changed? LLMs. specifically, LLMs gave us something RL never had before: a general-purpose reasoning backbone. pre-LLM, if you wanted an RL agent that could plan and reason, you had to hand-engineer the planning module, the state representation, the action space. now the LLM handles all of that. it can read instructions, write code, call APIs, interpret results, and decide what to do next — all in natural language.
+    </p>
+    <p>
+        RL then provides the optimization loop. the LLM gives you the <em>capacity</em> to act intelligently; RL gives you the <em>pressure</em> to act well. without RL, you have a capable but aimless system. it can reason but doesn't know what to optimize for. without the LLM, you have a well-optimized but narrow system. it knows its objective but can't generalize.
+    </p>
+    <p>
+        the combination is something new. not just "RL with better function approximation." a qualitatively different kind of agent.
+    </p>
+
+    <h2 id="reward-is-learned">reward is no longer a number from the environment</h2>
+    <p>
+        here's the key insight, and it's the one i think most people underestimate: in agentic RL, reward is no longer a scalar handed to you by the environment. it's a <em>learned judgment</em>.
+    </p>
+    <p>
+        RLHF was the first big demonstration of this. instead of coding up a reward function, you train a model to predict human preferences. the reward model looks at two outputs, decides which one a human would prefer, and uses that signal to train the policy. the reward is subjective, contextual, and impossible to specify by hand.
+    </p>
+    <p>
+        RLAIF takes it further — use an AI model itself as the judge. constitutional AI, self-play evaluation, automated red-teaming. the reward signal becomes a conversation between models rather than a lookup table in the environment.
+    </p>
+    <p>
+        this shift matters enormously for domains where quality is subjective. writing, design, conversation — and video generation. you can't write a mathematical function that captures "does this video look physically plausible while being aesthetically pleasing and narratively coherent." but you can train a model to judge it. maybe.
+    </p>
+
+    <h2 id="video-connection">the video AI connection</h2>
+    <p>
+        video generation is where agentic RL gets really interesting — and really hard. models like Sora and Seedance can generate impressive clips, but evaluating and improving them is an open problem.
+    </p>
+    <p>
+        the quality of a generated video isn't one thing. it's physics fidelity (does the ball bounce right?), temporal coherence (does the scene flow smoothly?), aesthetic quality (is it beautiful?), and semantic accuracy (does it match the prompt?). these axes are often orthogonal. a video can be physically accurate but ugly, or gorgeous but physically nonsensical.
+    </p>
+    <p>
+        traditional metrics like FID and FVD capture distributional similarity but miss all the things humans actually care about. you need a learned reward model that understands physics, aesthetics, and narrative simultaneously. and you need an RL loop that can use that reward signal to actually improve the generator.
+    </p>
+    <p>
+        this is the frontier. not just generating video, but building the evaluation and optimization infrastructure that makes video generation systematically improvable. it's the same paradigm shift that RLHF brought to language — applied to a modality that's orders of magnitude more complex.
+    </p>
+
+    <h2 id="why-hard">why this is genuinely hard</h2>
+    <p>
+        i don't want to undersell the difficulty. agentic RL for video faces challenges that don't exist in text:
+    </p>
+    <p>
+        <strong>sparse rewards over long horizons.</strong> a 10-second video at 24fps is 240 frames. the agent needs to make good decisions at every frame, but you might only get meaningful feedback on the final result. credit assignment over 240 steps is brutal.
+    </p>
+    <p>
+        <strong>multi-dimensional quality.</strong> the reward isn't a single number. it's a vector across physics, aesthetics, coherence, and more. collapsing it to a scalar loses critical information. keeping it as a vector makes optimization much harder.
+    </p>
+    <p>
+        <strong>reward hacking.</strong> in text, reward hacking produces verbose, sycophantic outputs. annoying but recoverable. in video, reward hacking can produce mode collapse — beautiful but completely static frames, or perfectly smooth but semantically empty motion. catastrophic in ways that are hard to detect automatically.
+    </p>
+    <p>
+        <strong>data scarcity.</strong> expert video evaluations are expensive. crowdsourced annotations disagree wildly. the data flywheel that powered RLHF for text doesn't spin up easily for video.
+    </p>
+
+    <h2 id="personal">why i work on this</h2>
+    <p>
+        i've spent years at the intersection of RL, NLP, and production systems at Microsoft. what draws me to agentic RL for video isn't just the technical challenge — it's that it sits at the exact convergence of everything i care about.
+    </p>
+    <p>
+        my work on entity-aware summarization was fundamentally about alignment: making sure AI outputs are faithful to ground truth. the same principle applies here, just in a harder modality. when a video generator shows a ball falling upward, that's an alignment failure. when a reward model doesn't notice, that's a deeper one.
+    </p>
+    <p>
+        i think the next few years will be defined by whoever figures out the reward modeling problem for video. not the generation architecture — transformers and diffusion models are converging on good solutions there. the bottleneck is evaluation. how do you build a system that <em>knows what good looks like</em>?
+    </p>
+    <p>
+        that's the question. and i think agentic RL — agents that can reason about quality, decompose evaluation into rubrics, and learn from expert feedback — is how we get there.
+    </p>
+
+  </div>
+</article>
+</main>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+</body>
+</html>

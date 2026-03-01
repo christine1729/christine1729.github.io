@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="index, follow">
+    <title>Building Reward Models That Actually See | christine's nest</title>
+    <meta name="keywords" content="reward models, video AI, CLIP, evaluation, reinforcement learning">
+    <meta name="description" content="The gap between 'generates text well' and 'evaluates video well' is enormous. Current proxy metrics miss what matters. Here's the path from CLIP scores to learned reward models calibrated on expert data.">
+    <meta name="author" content="Christine Hu">
+    <link crossorigin="anonymous" href="/assets/css/stylesheet.min.949307ebc5cfbfc5e27c5ec3d332ce0be9137ec4137e02aefc52cf0267172e22.css" integrity="sha256-lJMH68XPv8XifF7D0zLOC+kTfsQTfgKu/FLPAmcXLiI=" rel="preload stylesheet" as="style">
+    <link rel="icon" href="/tiger.ico">
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+</script>
+
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="/" accesskey="h" title="christine's nest (Alt + H)">christine's nest</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li><a href="/" title="Home"><span>Home</span></a></li>
+            <li><a href="/blog.html" title="Writing"><span>Writing</span></a></li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+        building reward models that actually see
+    </h1>
+    <div class="post-meta"><span title="2025-02-10">Feb 10, 2025</span>&nbsp;&middot;&nbsp;6 min&nbsp;&middot;&nbsp;Christine Hu</div>
+  </header>
+  <div class="toc">
+    <details>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Contents</span>
+        </summary>
+        <div class="inner">
+            <ul>
+                <li><a href="#the-gap">the enormous gap</a></li>
+                <li><a href="#proxy-metrics">the proxy metric trap</a></li>
+                <li><a href="#expert-eyes">what expert evaluators actually look at</a></li>
+                <li><a href="#the-path">the path forward</a></li>
+                <li><a href="#entitysum-connection">connection to entity-aware evaluation</a></li>
+                <li><a href="#data-moat">why data is the real moat</a></li>
+            </ul>
+        </div>
+    </details>
+  </div>
+
+  <div class="post-content">
+
+    <h2 id="the-gap">the enormous gap</h2>
+    <p>
+        here's something that doesn't get discussed enough: the gap between "this model generates text well" and "this model evaluates video well" is enormous. like, qualitatively-different-problem enormous.
+    </p>
+    <p>
+        text reward models work because language has structure. grammar, semantics, logic — there are rules, and violations of those rules are detectable. you can check if a summary is faithful to a source document by comparing entities and claims. you can check if code runs by executing it. the evaluation is often reducible to something verifiable.
+    </p>
+    <p>
+        video doesn't have that luxury. "good video" is a judgment that integrates physics, aesthetics, temporal dynamics, narrative logic, and prompt adherence simultaneously. there's no compiler you can run. there's no fact-checking database. the ground truth is: does this look right to a human who understands how the world works?
+    </p>
+    <p>
+        and that's the core challenge of building reward models for video AI. you're trying to distill human perceptual judgment — the kind that takes years of visual experience to develop — into a differentiable function.
+    </p>
+
+    <h2 id="proxy-metrics">the proxy metric trap</h2>
+    <p>
+        the current state of the art in video evaluation is honestly kind of embarrassing. here's what we've been using:
+    </p>
+    <p>
+        <strong>CLIP-based metrics.</strong> CLIPScore measures alignment between text and image/video by embedding both into a shared space and computing cosine similarity. it's fast, cheap, differentiable. it also misses basically everything that matters. CLIP can't tell you if a ball bounces correctly. it can't detect temporal flickering. it can tell you "this frame contains a cat and a piano" but not "the cat's paw is moving across the keys in a physically plausible way."
+    </p>
+    <p>
+        <strong>FID/FVD.</strong> distributional metrics. they tell you whether your generated distribution matches the real distribution statistically. useful for benchmarking model architectures. useless for RL, which needs per-sample rewards. also: FVD was designed when generated videos were 16 frames at 64x64 resolution. applying it to 240-frame 1080p videos is... a stretch.
+    </p>
+    <p>
+        <strong>VQA scores.</strong> Visual Question Answering models can be prompted w/ evaluation questions ("is there a cat in this video?" "is the cat touching the piano?"). clever, compositional, and surprisingly useful for semantic accuracy. but VQA models have their own failure modes, and they can't evaluate aesthetics or physics — only semantic content.
+    </p>
+    <p>
+        the problem with all of these is Goodhart's Law: when the metric becomes the target, it ceases to be a good metric. optimize CLIPScore and you get videos that are semantically recognizable but physically nonsensical. optimize FVD and you get videos that look like the training set (which might be what you want, or might be the opposite of creative generation). optimize VQA accuracy and you get videos that answer questions correctly but look terrible.
+    </p>
+
+    <h2 id="expert-eyes">what expert evaluators actually look at</h2>
+    <p>
+        i've spent time watching how expert video evaluators — cinematographers, VFX artists, animation directors — assess generated video. their process is nothing like computing a CLIP score. it's closer to:
+    </p>
+    <p>
+        <strong>physics scan.</strong> first pass: does anything violate basic physics? does the ball bounce right? does hair flow naturally? do shadows match the light source? experts catch physics errors in milliseconds that automated metrics completely miss. a cloth draped over a chair that clips through the surface. water flowing slightly uphill. gravity that's 80% of what it should be — not obviously wrong, but <em>felt</em> as wrong.
+    </p>
+    <p>
+        <strong>temporal coherence check.</strong> second pass: scrub through the video. do objects maintain identity? does the texture of a wall stay consistent? does the color grade shift unexpectedly? temporal coherence is about consistency over time, and it requires watching the video multiple times at different speeds.
+    </p>
+    <p>
+        <strong>narrative logic.</strong> does the cut make sense? if someone throws a ball, does the next shot show it landing? does the camera motion tell a story? this is the highest-level evaluation, and it's where current metrics are most helpless. narrative logic requires understanding causality, intention, and visual storytelling.
+    </p>
+    <p>
+        <strong>the "uncanny" detector.</strong> the hardest thing to formalize. experts have an intuition for when something is <em>almost right but not quite</em>. faces that are 95% correct but feel wrong. motion that's smooth but somehow lifeless. this is the frontier — the stuff that separates current generators from truly convincing output.
+    </p>
+
+    <h2 id="the-path">the path forward</h2>
+    <p>
+        so how do we get from "CLIP score" to "expert-calibrated reward model"? i think the path has four stages:
+    </p>
+    <p>
+        <strong>stage 1: entity-aware evaluation.</strong> before you can judge quality, you need to verify that the right things are in the video. this is basically VQA on steroids — not just "is there a cat?" but "is this the <em>same</em> cat in every frame? does it have consistent markings? does it persist when occluded?" entity tracking + attribute consistency as a foundation for everything else.
+    </p>
+    <p>
+        <strong>stage 2: multi-rubric scoring.</strong> decompose "video quality" into independent rubrics: physics ($R_{\text{phys}}$), temporal coherence ($R_{\text{temp}}$), aesthetics ($R_{\text{aes}}$), semantic accuracy ($R_{\text{sem}}$), and narrative logic ($R_{\text{nar}}$). train a separate model for each rubric on targeted data. physics models train on simulation data + expert annotations of physical plausibility. aesthetic models train on photography datasets + professional evaluations. each model can be small and focused.
+    </p>
+    <p>
+        <strong>stage 3: learned composition.</strong> learn how to weight and combine the rubric scores into a holistic quality judgment. this isn't just $w_1 R_1 + w_2 R_2$ — the weights should be context-dependent. a simulation should weight physics heavily; a music video should weight aesthetics. a meta-model that takes the rubric scores + prompt context and outputs a calibrated composite score.
+    </p>
+    <p>
+        <strong>stage 4: calibration on expert data.</strong> the final step: calibrate the composite model against actual expert preferences. this is where exclusive, high-quality annotation data becomes irreplaceable. you show the model pairs of videos, collect expert preferences, and fine-tune the composition to match. the rubric models provide structure; the expert data provides ground truth.
+    </p>
+
+    <h2 id="entitysum-connection">connection to entity-aware evaluation</h2>
+    <p>
+        this might seem like a completely different problem from what i worked on at Microsoft w/ entity-aware summarization, but the core principle is the same: <em>align AI output with ground truth by tracking the entities that matter.</em>
+    </p>
+    <p>
+        in entitySum, the problem was: given a webpage, generate a summary that doesn't hallucinate — that only includes claims supported by the source. the solution: track entities (products, prices, features) and verify that every entity mention in the summary has a corresponding grounding in the source.
+    </p>
+    <p>
+        in video reward modeling, the analogous problem is: given a text prompt, does the generated video contain the right entities behaving in the right ways? "a golden retriever catching a frisbee in a park" — is there a golden retriever (not a labrador)? is there a frisbee (not a ball)? is it a park (not a beach)? is the dog <em>catching</em> the frisbee (not ignoring it)?
+    </p>
+    <p>
+        entity-aware evaluation is stage 1 — the foundation. you can't judge physics fidelity if you haven't first verified that the right objects are present and persistent. you can't judge narrative logic if you haven't tracked which entities interact with which. the entity graph is the scaffold on which all higher-level evaluation hangs.
+    </p>
+    <p>
+        the modality changed — text to video — but the principle didn't. ground your evaluation in verifiable entities, then build up to subjective quality judgments on top of that grounding.
+    </p>
+
+    <h2 id="data-moat">why data is the real moat</h2>
+    <p>
+        there's a popular narrative that the moat in AI is the model architecture. i think that's wrong, esp for video RL. architectures converge. transformers, diffusion, flow matching — the generation side is becoming commoditized. everyone will have a good video generator within a year or two.
+    </p>
+    <p>
+        the moat is the reward model. and the moat around the reward model is the calibration data.
+    </p>
+    <p>
+        you can replicate a model architecture from a paper. you can re-implement a training loop from pseudocode. you can't replicate the thousands of hours of expert video evaluations that calibrate a reward model to actually see what humans see. that data is expensive, slow to collect, and requires domain expertise to annotate well.
+    </p>
+    <p>
+        this is why data partnerships matter more than ever. access to professional evaluators — cinematographers, VFX supervisors, animation directors — is the bottleneck. not compute, not algorithms. eyes.
+    </p>
+    <p>
+        the teams that build exclusive relationships w/ professional evaluation communities will have reward models that see things other models miss. and those reward models will compound: better evaluation → better generation → better samples to evaluate → even better evaluation.
+    </p>
+    <p>
+        that flywheel, once it spins up, is very hard to replicate. and it starts w/ data, not models.
+    </p>
+
+  </div>
+</article>
+</main>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+</body>
+</html>

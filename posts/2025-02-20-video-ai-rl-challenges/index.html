@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="index, follow">
+    <title>The Hard Problems of RL for Video AI | christine's nest</title>
+    <meta name="keywords" content="RL, video AI, reward models, GRPO, DPO, reinforcement learning">
+    <meta name="description" content="Video generation models need evaluation beyond FID/FVD. Here are the core challenges of applying reinforcement learning to video AI — from reward design to credit assignment to training instability.">
+    <meta name="author" content="Christine Hu">
+    <link crossorigin="anonymous" href="/assets/css/stylesheet.min.949307ebc5cfbfc5e27c5ec3d332ce0be9137ec4137e02aefc52cf0267172e22.css" integrity="sha256-lJMH68XPv8XifF7D0zLOC+kTfsQTfgKu/FLPAmcXLiI=" rel="preload stylesheet" as="style">
+    <link rel="icon" href="/tiger.ico">
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+</script>
+
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$','$$'], ['\\[', '\\]']],
+      processEscapes: true,
+      processEnvironments: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+    }
+  };
+</script>
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="/" accesskey="h" title="christine's nest (Alt + H)">christine's nest</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+            <li><a href="/" title="Home"><span>Home</span></a></li>
+            <li><a href="/blog.html" title="Writing"><span>Writing</span></a></li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <h1 class="post-title">
+        the hard problems of RL for video AI
+    </h1>
+    <div class="post-meta"><span title="2025-02-20">Feb 20, 2025</span>&nbsp;&middot;&nbsp;8 min&nbsp;&middot;&nbsp;Christine Hu</div>
+  </header>
+  <div class="toc">
+    <details>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Contents</span>
+        </summary>
+        <div class="inner">
+            <ul>
+                <li><a href="#problem">the problem: evaluation beyond FID</a></li>
+                <li><a href="#challenge-1">challenge 1: reward model design</a></li>
+                <li><a href="#challenge-2">challenge 2: credit assignment over long sequences</a></li>
+                <li><a href="#challenge-3">challenge 3: training instability and reward hacking</a></li>
+                <li><a href="#challenge-4">challenge 4: the data flywheel cold start</a></li>
+                <li><a href="#grpo">a GRPO-style training loop for video</a></li>
+                <li><a href="#whats-working">what's actually working</a></li>
+            </ul>
+        </div>
+    </details>
+  </div>
+
+  <div class="post-content">
+
+    <h2 id="problem">the problem: evaluation beyond FID</h2>
+    <p>
+        video generation has gotten impressively good. Sora, Seedance, Kling, Runway Gen-3 — the raw generation quality is approaching usability. but there's a gap between "can produce impressive demos" and "can be systematically improved via RL." that gap is evaluation.
+    </p>
+    <p>
+        the standard metrics in the generative modeling world — FID (Fr&eacute;chet Inception Distance) for images, FVD (Fr&eacute;chet Video Distance) for video — measure distributional similarity between generated and real data. they answer the question: "does this batch of generated videos look statistically similar to real videos?" useful for benchmarking, terrible for RL.
+    </p>
+    <p>
+        RL needs a per-sample reward signal. not "does this distribution look right?" but "is <em>this specific video</em> good?" and "good" itself is multi-dimensional. a video can be physically plausible but aesthetically boring. it can be beautiful but violate basic physics. it can match the prompt perfectly but have jarring temporal artifacts.
+    </p>
+    <p>
+        to apply RL to video generation, we need reward models that capture what humans actually care about. and building those models is — i think — the central technical challenge of the next few years.
+    </p>
+
+    <h2 id="challenge-1">challenge 1: reward model design</h2>
+    <p>
+        what makes a "good" video? ask ten experts and you'll get ten different decompositions. but roughly, there are a few orthogonal axes:
+    </p>
+    <p>
+        <strong>physics fidelity.</strong> does the ball bounce correctly? does water flow downhill? does cloth drape naturally? this is partially checkable against learned physics simulators, but the space of physical interactions in open-domain video is enormous.
+    </p>
+    <p>
+        <strong>temporal coherence.</strong> do objects persist across frames? does the lighting stay consistent? does the camera motion feel natural? temporal artifacts — flickering textures, morphing objects, sudden jumps — are the most common failure mode of current generators.
+    </p>
+    <p>
+        <strong>aesthetic quality.</strong> composition, color grading, visual appeal. this is inherently subjective but not random — there's high inter-rater agreement on extreme cases and meaningful disagreement in the middle.
+    </p>
+    <p>
+        <strong>semantic accuracy.</strong> does the video match the text prompt? "a cat playing piano in a jazz bar" should show a cat, a piano, and a jazz bar, with the cat actually interacting w/ the instrument.
+    </p>
+    <p>
+        the naive approach is to train a single reward model that outputs a scalar. but collapsing these axes into one number loses critical information. if your model scores 0.7, is that because physics is perfect but aesthetics are mediocre? or because everything is okay but nothing is great?
+    </p>
+    <p>
+        formally, we want a reward function $R: \mathcal{V} \times \mathcal{T} \rightarrow \mathbb{R}^k$ where $\mathcal{V}$ is the video space, $\mathcal{T}$ is the text prompt space, and $k$ is the number of quality dimensions. the RL objective then becomes:
+    </p>
+    <p>
+        $$\max_\theta \mathbb{E}_{v \sim \pi_\theta(\cdot | t)} \left[ \sum_{i=1}^{k} w_i \cdot R_i(v, t) - \beta \cdot D_{\text{KL}}(\pi_\theta \| \pi_{\text{ref}}) \right]$$
+    </p>
+    <p>
+        where $w_i$ are weighting coefficients across quality dimensions and $\beta$ controls the KL penalty against a reference policy $\pi_{\text{ref}}$ (to prevent reward hacking). the challenge: the $w_i$ values are themselves context-dependent. a physics simulation video should weight physics fidelity highly; an artistic music video should weight aesthetics more.
+    </p>
+
+    <h2 id="challenge-2">challenge 2: credit assignment over long sequences</h2>
+    <p>
+        credit assignment is RL's oldest problem. in video, it's especially nasty.
+    </p>
+    <p>
+        a 10-second video at 24fps is 240 frames. if the video is "bad," where did the model go wrong? maybe it's frame 47, where an object starts morphing. maybe it's the global planning stage, where the model decided on a camera trajectory that makes the scene incoherent. maybe it's nowhere specific — the overall motion dynamics just feel slightly off.
+    </p>
+    <p>
+        in text RL (like RLHF for chat), the sequence length is typically dozens to hundreds of tokens, and there's a natural structure (sentences, paragraphs) that helps localize quality. video has no such structure. quality is a continuous, spatiotemporal property.
+    </p>
+    <p>
+        one approach: hierarchical credit assignment. decompose the video into temporal segments and spatial regions, evaluate each independently, then compose:
+    </p>
+    <p>
+        $$R(v) = \sum_{s=1}^{S} \gamma^s \left[ R_{\text{segment}}(v_s) + \lambda \sum_{r \in \text{regions}(s)} R_{\text{local}}(v_s^r) \right]$$
+    </p>
+    <p>
+        where $v_s$ is the $s$-th temporal segment and $v_s^r$ is a spatial region within that segment. this gives you a richer signal than a single scalar, but it requires reward models that can operate at multiple granularities. training such models is itself a significant challenge — you need annotations at the segment and region level, not just clip-level.
+    </p>
+
+    <h2 id="challenge-3">challenge 3: training instability and reward hacking</h2>
+    <p>
+        reward hacking in video is catastrophic in ways that text reward hacking isn't.
+    </p>
+    <p>
+        in language, reward hacking typically produces text that's verbose, sycophantic, or superficially impressive but vacuous. annoying, but the output is still <em>text</em>. you can read it and see the problem.
+    </p>
+    <p>
+        in video, reward hacking can produce:
+    </p>
+    <ul>
+        <li><strong>mode collapse to static frames.</strong> the model learns that a single beautiful frame, held for 10 seconds, scores well on aesthetics and semantic accuracy. technically matches the prompt, technically looks good. completely useless as video.</li>
+        <li><strong>texture smoothing.</strong> the model discovers that blurring fine details reduces temporal flickering artifacts. the reward model, which penalizes flickering, rewards this. result: everything looks like a watercolor painting.</li>
+        <li><strong>physics shortcuts.</strong> instead of learning realistic physics, the model learns to avoid situations where physics matters. prompt says "ball bouncing" — the model generates the ball at rest. no bouncing = no physics errors = high physics score.</li>
+    </ul>
+    <p>
+        the KL penalty helps but isn't sufficient. you need multi-faceted reward models that can't all be gamed simultaneously, plus adversarial probing to identify failure modes before they compound during training.
+    </p>
+    <p>
+        training instability is also worse because the generation process is expensive. each sample from a video diffusion model takes orders of magnitude more compute than a text sample. you can't just "run more rollouts" the way you can in language RL. every training step is precious, which means instability is costly.
+    </p>
+
+    <h2 id="challenge-4">challenge 4: the data flywheel cold start</h2>
+    <p>
+        RLHF for text had a crucial advantage: human annotations are cheap and fast. anyone can read two chatbot responses and say which one they prefer. the preference data flywheel spins up quickly.
+    </p>
+    <p>
+        video evaluation is different:
+    </p>
+    <ul>
+        <li><strong>expert annotations are expensive.</strong> evaluating physics fidelity requires domain expertise. evaluating cinematic quality requires trained eyes. you can't crowdsource "does this ball bounce correctly?" to random annotators — the inter-rater reliability is too low.</li>
+        <li><strong>evaluation takes time.</strong> you need to watch the full clip. for temporal coherence, you often need to watch multiple times. a single annotation might take 2-5 minutes vs. seconds for text.</li>
+        <li><strong>disagreement is structured, not random.</strong> experts disagree on aesthetics but agree on physics. novices agree on aesthetics but miss physics errors. collapsing across annotators loses information; modeling annotator expertise adds complexity.</li>
+    </ul>
+    <p>
+        the cold start problem: you need a good reward model to train the generator, but you need a decent generator to produce samples worth annotating, and you need annotations to train the reward model.
+    </p>
+    <p>
+        breaking this cycle probably requires synthetic data — using existing video understanding models (VideoMAE, InternVideo, etc.) as weak labelers to bootstrap the reward model, then refining w/ targeted expert annotations on the hardest cases.
+    </p>
+
+    <h2 id="grpo">a GRPO-style training loop for video</h2>
+    <p>
+        Group Relative Policy Optimization (GRPO) offers a promising framework for video RL because it avoids learning a separate value function — which would be extremely expensive to train for video. here's a sketch of what a video-adapted version might look like:
+    </p>
+
+<pre><code class="language-python"># GRPO-style training for video generation
+def train_step(prompts, generator, reward_models, ref_generator):
+    for prompt in prompts:
+        # 1. sample a group of candidate videos
+        videos = [generator.sample(prompt) for _ in range(G)]
+
+        # 2. score each video across reward dimensions
+        rewards = {}
+        for dim, rm in reward_models.items():
+            scores = [rm.score(v, prompt) for v in videos]
+            # group-relative normalization
+            mean_s, std_s = mean(scores), std(scores)
+            rewards[dim] = [(s - mean_s) / (std_s + eps) for s in scores]
+
+        # 3. composite reward w/ dimension weights
+        composite = [
+            sum(w[dim] * rewards[dim][i] for dim in rewards)
+            for i in range(G)
+        ]
+
+        # 4. compute advantages relative to group
+        advantages = composite  # already normalized
+
+        # 5. policy gradient update w/ KL constraint
+        for video, adv in zip(videos, advantages):
+            log_prob = generator.log_prob(video, prompt)
+            ref_log_prob = ref_generator.log_prob(video, prompt)
+            kl = log_prob - ref_log_prob
+
+            # clipped objective (PPO-style within GRPO)
+            ratio = exp(log_prob - log_prob.detach())
+            loss = -min(
+                ratio * adv,
+                clip(ratio, 1 - eps_clip, 1 + eps_clip) * adv
+            ) + beta * kl
+
+            loss.backward()
+</code></pre>
+
+    <p>
+        the key ideas: (1) group-relative normalization removes the need for a value baseline, (2) multi-dimensional rewards are composed with learned or scheduled weights, (3) KL penalty against the reference generator prevents reward hacking, and (4) the clipped objective stabilizes training.
+    </p>
+    <p>
+        the main practical issue: $G$ (group size) needs to be large enough for stable normalization, but each sample is a full video generation pass. at current costs, $G = 16$ might be the practical limit, which is much smaller than what's typical in text GRPO ($G = 64$ or more). this makes the gradient estimates noisier and training less stable.
+    </p>
+
+    <h2 id="whats-working">what's actually working</h2>
+    <p>
+        despite these challenges, there's real progress:
+    </p>
+    <p>
+        <strong>DPO for video preference alignment.</strong> Direct Preference Optimization sidesteps explicit reward modeling entirely. given pairs of videos (one preferred, one not), DPO directly optimizes the generator to produce preferred outputs. the advantage: no reward model to hack. the limitation: you still need preference pairs, and generating them is expensive.
+    </p>
+    <p>
+        <strong>hierarchical reward decomposition.</strong> several groups are training separate reward models for physics, aesthetics, and temporal coherence, then combining scores. this works better than monolithic scoring because each sub-model can be trained on targeted data. physics reward models can leverage simulation data; aesthetic models can leverage photography datasets.
+    </p>
+    <p>
+        <strong>synthetic reward bootstrapping.</strong> using CLIP scores, VQA models, and optical flow analysis as cheap proxy rewards to bootstrap training, then fine-tuning w/ human preferences. the proxy rewards are imperfect, but they provide enough signal to get the generator into a regime where human annotation is efficient.
+    </p>
+    <p>
+        <strong>temporal attention probing.</strong> using attention maps from the generation process itself as a diagnostic tool. if the model isn't attending to the right regions at the right times, that's a signal for the reward model — even without explicit supervision.
+    </p>
+    <p>
+        the honest summary: we're at the "it works in controlled settings but breaks in the wild" stage. the theoretical framework is solidifying — GRPO, DPO, multi-dimensional rewards, hierarchical decomposition. the engineering challenge is making it work at scale, with noisy data, on open-domain prompts. that's where the next breakthroughs will come from.
+    </p>
+
+  </div>
+</article>
+</main>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+</script>
+</body>
+</html>

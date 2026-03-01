@@ -44,15 +44,6 @@
       margin-top: 4px;
       line-height: 1.5;
     }
-    .filter-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 24px;
-    }
-    .post-list a[data-hidden="true"] {
-      display: none;
-    }
     .year-label {
       font-family: var(--font-mono);
       font-size: 12px;
@@ -85,25 +76,38 @@
       <div class="container" style="max-width: 720px;">
         <p class="section-label">Archive</p>
         <h1 class="section-title">Writing</h1>
-        <p style="font-size: 15px; color: var(--gray-500); margin-top: 8px;">Technical notes on reinforcement learning, NLP, computer vision, and generative models.</p>
-
-        <!-- Filters -->
-        <div class="filter-bar">
-          <button class="tag active" data-filter="all">All</button>
-          <button class="tag" data-filter="rl">RL</button>
-          <button class="tag" data-filter="nlp">NLP</button>
-          <button class="tag" data-filter="cv">CV</button>
-          <button class="tag" data-filter="gen">Generative Models</button>
-          <button class="tag" data-filter="theory">Theory</button>
-          <button class="tag" data-filter="career">Career</button>
-        </div>
+        <p style="font-size: 15px; color: var(--gray-500); margin-top: 8px;">Notes on agentic RL, video AI, and the path from research to production.</p>
 
         <!-- Post list -->
-        <div class="post-list" style="margin-top: 16px;">
+        <div class="post-list" style="margin-top: 24px;">
 
           <div class="year-label">2025</div>
 
-          <a href="/posts/2025-09-19-AI-Index/" data-tags="career">
+          <a href="/posts/2025-02-28-agentic-rl/">
+            <div class="post-row">
+              <span class="post-title">Why Agentic RL Changes Everything</span>
+              <span class="post-date">Feb 28</span>
+            </div>
+            <p class="post-summary">Most RL research treats the agent as a policy optimizing a fixed reward. Agentic RL is different &mdash; the agent reasons, plans, uses tools, retries.</p>
+          </a>
+
+          <a href="/posts/2025-02-20-video-ai-rl-challenges/">
+            <div class="post-row">
+              <span class="post-title">The Hard Problems of RL for Video AI</span>
+              <span class="post-date">Feb 20</span>
+            </div>
+            <p class="post-summary">Video generation models need evaluation beyond FID/FVD. Reward design, credit assignment, training instability, and the data flywheel cold start.</p>
+          </a>
+
+          <a href="/posts/2025-02-10-reward-models-video/">
+            <div class="post-row">
+              <span class="post-title">Building Reward Models That Actually See</span>
+              <span class="post-date">Feb 10</span>
+            </div>
+            <p class="post-summary">The gap between &ldquo;generates text well&rdquo; and &ldquo;evaluates video well&rdquo; is enormous. From CLIP scores to learned reward models calibrated on expert data.</p>
+          </a>
+
+          <a href="/posts/2025-09-19-AI-Index/">
             <div class="post-row">
               <span class="post-title">The AI Divide: How We Use ChatGPT vs. Claude</span>
               <span class="post-date">Sep 19</span>
@@ -113,252 +117,12 @@
 
           <div class="year-label">2022</div>
 
-          <a href="/posts/2022-10-17-dsml/" data-tags="career">
+          <a href="/posts/2022-10-17-dsml/">
             <div class="post-row">
               <span class="post-title">Recent FAQs &mdash; DS &amp; ML Job Seeking</span>
               <span class="post-date">Oct 17</span>
             </div>
             <p class="post-summary">How I chose DS/ML over SWE, interview prep, and reflections on working at Microsoft.</p>
-          </a>
-
-          <div class="year-label">2020</div>
-
-          <a href="/posts/2020-08-06-nas/" data-tags="theory">
-            <div class="post-row">
-              <span class="post-title">Neural Architecture Search</span>
-              <span class="post-date">Aug 6</span>
-            </div>
-            <p class="post-summary">Systematic and automatic approaches to finding optimal network architectures beyond human-designed models.</p>
-          </a>
-
-          <a href="/posts/2020-06-07-exploration-drl/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">Exploration Strategies in Deep Reinforcement Learning</span>
-              <span class="post-date">Jun 7</span>
-            </div>
-            <p class="post-summary">The exploitation vs. exploration dilemma and strategies for efficient discovery in RL agents.</p>
-          </a>
-
-          <a href="/posts/2020-04-07-the-transformer-family/" data-tags="nlp">
-            <div class="post-row">
-              <span class="post-title">The Transformer Family</span>
-              <span class="post-date">Apr 7</span>
-            </div>
-            <p class="post-summary">New and enhanced Transformer variants for longer attention, less memory, and reduced computation.</p>
-          </a>
-
-          <a href="/posts/2020-01-29-curriculum-rl/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">Curriculum for Reinforcement Learning</span>
-              <span class="post-date">Jan 29</span>
-            </div>
-            <p class="post-summary">Teaching RL agents progressively, from simple to complex tasks, inspired by human learning.</p>
-          </a>
-
-          <div class="year-label">2019</div>
-
-          <a href="/posts/2019-11-10-self-supervised/" data-tags="theory">
-            <div class="post-row">
-              <span class="post-title">Self-Supervised Representation Learning</span>
-              <span class="post-date">Nov 10</span>
-            </div>
-            <p class="post-summary">Contrastive predictive coding, MoCo, SimCLR, and bisimulation approaches for representation learning.</p>
-          </a>
-
-          <a href="/posts/2019-09-05-evolution-strategies/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">Evolution Strategies</span>
-              <span class="post-date">Sep 5</span>
-            </div>
-            <p class="post-summary">Black-box optimization algorithms as alternatives to stochastic gradient descent for deep learning.</p>
-          </a>
-
-          <a href="/posts/2019-06-23-meta-rl/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">Meta Reinforcement Learning</span>
-              <span class="post-date">Jun 23</span>
-            </div>
-            <p class="post-summary">Meta-learning RL tasks by developing agents that solve unseen tasks quickly and efficiently.</p>
-          </a>
-
-          <a href="/posts/2019-05-05-domain-randomization/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">Domain Randomization for Sim2Real Transfer</span>
-              <span class="post-date">May 5</span>
-            </div>
-            <p class="post-summary">Bridging the reality gap in robotics by training with randomized simulation environments.</p>
-          </a>
-
-          <a href="/posts/2019-03-14-overfit/" data-tags="theory">
-            <div class="post-row">
-              <span class="post-title">Are Deep Neural Networks Dramatically Overfitted?</span>
-              <span class="post-date">Mar 14</span>
-            </div>
-            <p class="post-summary">Why deep nets with millions of parameters don't overfit, and the Lottery Ticket Hypothesis.</p>
-          </a>
-
-          <a href="/posts/2019-01-31-lm/" data-tags="nlp">
-            <div class="post-row">
-              <span class="post-title">Generalized Language Models</span>
-              <span class="post-date">Jan 31</span>
-            </div>
-            <p class="post-summary">ULMFiT, GPT-2, ALBERT, RoBERTa, T5, GPT-3, XLNet, BART, ELECTRA &mdash; large-scale pre-trained LMs.</p>
-          </a>
-
-          <div class="year-label">2018</div>
-
-          <a href="/posts/2018-12-27-object-recognition-part-4/" data-tags="cv">
-            <div class="post-row">
-              <span class="post-title">Object Detection Part 4: Fast Detection Models</span>
-              <span class="post-date">Dec 27</span>
-            </div>
-            <p class="post-summary">Fast object detection with SSD, RetinaNet, and the YOLO family.</p>
-          </a>
-
-          <a href="/posts/2018-11-30-meta-learning/" data-tags="rl theory">
-            <div class="post-row">
-              <span class="post-title">Meta-Learning: Learning to Learn Fast</span>
-              <span class="post-date">Nov 30</span>
-            </div>
-            <p class="post-summary">How machines can learn new concepts efficiently from few examples, inspired by human learning.</p>
-          </a>
-
-          <a href="/posts/2018-10-13-flow-models/" data-tags="gen">
-            <div class="post-row">
-              <span class="post-title">Flow-based Deep Generative Models</span>
-              <span class="post-date">Oct 13</span>
-            </div>
-            <p class="post-summary">Tackling density estimation with normalizing flows, a powerful statistics tool for generative models.</p>
-          </a>
-
-          <a href="/posts/2018-08-12-vae/" data-tags="gen">
-            <div class="post-row">
-              <span class="post-title">From Autoencoder to Beta-VAE</span>
-              <span class="post-date">Aug 12</span>
-            </div>
-            <p class="post-summary">Autoencoders, VAEs, VQ-VAE, and TD-VAE for high-dimensional data reconstruction.</p>
-          </a>
-
-          <a href="/posts/2018-06-24-attention/" data-tags="nlp">
-            <div class="post-row">
-              <span class="post-title">Attention? Attention!</span>
-              <span class="post-date">Jun 24</span>
-            </div>
-            <p class="post-summary">Pointer Networks, the Transformer, Neural Turing Machines, and self-attention mechanisms.</p>
-          </a>
-
-          <a href="/posts/2018-05-05-drl-implementation/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">Implementing Deep RL with Tensorflow + OpenAI Gym</span>
-              <span class="post-date">May 5</span>
-            </div>
-            <p class="post-summary">Hands-on practice implementing deep reinforcement learning models in the wild.</p>
-          </a>
-
-          <a href="/posts/2018-04-08-policy-gradient/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">Policy Gradient Algorithms</span>
-              <span class="post-date">Apr 8</span>
-            </div>
-            <p class="post-summary">Policy gradient methods including SAC, D4PG, TD3, and temperature-adjusted approaches.</p>
-          </a>
-
-          <a href="/posts/2018-02-19-rl-overview/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">A (Long) Peek into Reinforcement Learning</span>
-              <span class="post-date">Feb 19</span>
-            </div>
-            <p class="post-summary">SARSA, Q-learning, and the foundations of modern reinforcement learning.</p>
-          </a>
-
-          <a href="/posts/2018-01-23-multi-armed-bandit/" data-tags="rl">
-            <div class="post-row">
-              <span class="post-title">The Multi-Armed Bandit Problem and Its Solutions</span>
-              <span class="post-date">Jan 23</span>
-            </div>
-            <p class="post-summary">The exploration vs. exploitation dilemma and algorithms for the Bernoulli bandit.</p>
-          </a>
-
-          <div class="year-label">2017</div>
-
-          <a href="/posts/2017-12-31-object-recognition-part-3/" data-tags="cv">
-            <div class="post-row">
-              <span class="post-title">Object Detection Part 3: R-CNN Family</span>
-              <span class="post-date">Dec 31</span>
-            </div>
-            <p class="post-summary">The R-CNN family of object detection models, including bbox regression.</p>
-          </a>
-
-          <a href="/posts/2017-12-15-object-recognition-part-2/" data-tags="cv">
-            <div class="post-row">
-              <span class="post-title">Object Detection Part 2: CNN, DPM and Overfeat</span>
-              <span class="post-date">Dec 15</span>
-            </div>
-            <p class="post-summary">CNN-based approaches, deformable parts models, and the Overfeat framework.</p>
-          </a>
-
-          <a href="/posts/2017-10-29-object-recognition-part-1/" data-tags="cv">
-            <div class="post-row">
-              <span class="post-title">Object Detection Part 1: Gradient Vector, HOG, and SS</span>
-              <span class="post-date">Oct 29</span>
-            </div>
-            <p class="post-summary">The math behind object recognition: gradient vectors, HOG features, and selective search.</p>
-          </a>
-
-          <a href="/posts/2017-10-15-word-embedding/" data-tags="nlp">
-            <div class="post-row">
-              <span class="post-title">Learning Word Embedding</span>
-              <span class="post-date">Oct 15</span>
-            </div>
-            <p class="post-summary">Transforming words into numeric representations for machine learning models.</p>
-          </a>
-
-          <a href="/posts/2017-09-28-information-bottleneck/" data-tags="theory">
-            <div class="post-row">
-              <span class="post-title">Anatomize Deep Learning with Information Theory</span>
-              <span class="post-date">Sep 28</span>
-            </div>
-            <p class="post-summary">Prof Tishby's information bottleneck framework applied to understanding deep learning.</p>
-          </a>
-
-          <a href="/posts/2017-08-20-gan/" data-tags="gen">
-            <div class="post-row">
-              <span class="post-title">From GAN to WGAN</span>
-              <span class="post-date">Aug 20</span>
-            </div>
-            <p class="post-summary">Generative adversarial networks for replicating rich content like images and text.</p>
-          </a>
-
-          <a href="/posts/2017-08-01-interpretation/" data-tags="theory">
-            <div class="post-row">
-              <span class="post-title">How to Explain the Prediction of a ML Model?</span>
-              <span class="post-date">Aug 1</span>
-            </div>
-            <p class="post-summary">Model interpretability for critical applications in healthcare, justice, and finance.</p>
-          </a>
-
-          <a href="/posts/2017-07-22-stock-rnn-part-2/" data-tags="nlp">
-            <div class="post-row">
-              <span class="post-title">Predict Stock Prices Using RNN: Part 2</span>
-              <span class="post-date">Jul 22</span>
-            </div>
-            <p class="post-summary">Multi-stock RNN with embedding layers to distinguish different price sequences.</p>
-          </a>
-
-          <a href="/posts/2017-07-08-stock-rnn-part-1/" data-tags="nlp">
-            <div class="post-row">
-              <span class="post-title">Predict Stock Prices Using RNN: Part 1</span>
-              <span class="post-date">Jul 8</span>
-            </div>
-            <p class="post-summary">Building a recurrent neural network in Tensorflow to predict stock prices.</p>
-          </a>
-
-          <a href="/posts/2017-06-21-overview/" data-tags="theory">
-            <div class="post-row">
-              <span class="post-title">An Overview of Deep Learning for Curious People</span>
-              <span class="post-date">Jun 21</span>
-            </div>
-            <p class="post-summary">From AlphaGo to the fundamentals &mdash; a primer on deep learning for newcomers.</p>
           </a>
 
         </div>
@@ -377,36 +141,6 @@
     </div>
   </footer>
 
-  <script>
-    // Topic filter
-    document.querySelectorAll('.filter-bar .tag').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-bar .tag').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
-        document.querySelectorAll('.post-list a[data-tags]').forEach(post => {
-          if (filter === 'all' || post.dataset.tags.includes(filter)) {
-            post.removeAttribute('data-hidden');
-          } else {
-            post.setAttribute('data-hidden', 'true');
-          }
-        });
-        // Show/hide year labels based on visible posts
-        document.querySelectorAll('.year-label').forEach(label => {
-          let next = label.nextElementSibling;
-          let hasVisible = false;
-          while (next && !next.classList.contains('year-label')) {
-            if (next.tagName === 'A' && next.getAttribute('data-hidden') !== 'true') {
-              hasVisible = true;
-              break;
-            }
-            next = next.nextElementSibling;
-          }
-          label.style.display = hasVisible ? '' : 'none';
-        });
-      });
-    });
-  </script>
 
 </body>
 </html>
